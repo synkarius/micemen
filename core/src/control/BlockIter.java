@@ -140,15 +140,16 @@ public class BlockIter implements Iterator<Block> {
 		case UP:
 			cy -= 1;
 			ty += 1;
+			break;
 		case DOWN:
 			cy += 1;
-			ty += 1;
+			ty += 1;break;
 		case LEFT:
 			cx -= 1;
-			tx += 1;
+			tx += 1;break;
 		case RIGHT:
 			cx += 1;
-			tx += 1;
+			tx += 1;break;
 		default:
 			cy += 0;
 		}
@@ -167,22 +168,22 @@ public class BlockIter implements Iterator<Block> {
 						cx = ox;
 						tx = 0;
 						cy -= 1;
-						ty += 1;
+						ty += 1;break;
 					case DOWN:
 						cx = ox;
 						tx = 0;
 						cy += 1;
-						ty += 1;
+						ty += 1;break;
 					case LEFT:
 						cy = oy;
 						ty = 0;
 						cx -= 1;
-						tx += 1;
+						tx += 1;break;
 					case RIGHT:
 						cy = oy;
 						ty = 0;
 						cx += 1;
-						tx += 1;
+						tx += 1;break;
 					default:
 						cy += 0;
 					}

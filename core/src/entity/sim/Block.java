@@ -17,7 +17,7 @@ public abstract class Block {
 	private static int getID() {
 		if (nextID > 1000000)// 1m
 			nextID = 0;
-		return nextID;
+		return nextID++;
 	}
 
 	protected Type type;

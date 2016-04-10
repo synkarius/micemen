@@ -49,7 +49,7 @@ public class GridController {
 		int blueCount = 0;
 
 		for (int x = 0; x < grid.width(); x++) {
-			for (int y = 0; y < grid.width(); y++) {
+			for (int y = 0; y < grid.height(); y++) {
 				Block result = new EmptyBlock();
 
 				if (PLACEMENT.containsKey(x)) {
@@ -61,11 +61,11 @@ public class GridController {
 					boolean placeMouse = Math.random() > .4;
 					if (placeMouse && !VERBOTEN.contains(x)) {
 						if (x < 8 && redCount < grid.micePerTeam() && columnMouseCount(x, Team.RED) < 2
-								&& rowMouseCount(x, Team.RED) == 0) {
+								&& rowMouseCount(y, Team.RED) == 0) {
 							result = new Mouse(Team.RED);
 							redCount += 1;
 						} else if (x > 12 && blueCount < grid.micePerTeam() && columnMouseCount(x, Team.BLUE) < 2
-								&& rowMouseCount(x, Team.BLUE) == 0) {
+								&& rowMouseCount(y, Team.BLUE) == 0) {
 							result = new Mouse(Team.BLUE);
 							blueCount += 1;
 						}
@@ -94,7 +94,7 @@ public class GridController {
 			dir = Direction.RIGHT;
 		}
 
-		List<Block> emptyBlocks = new BlockIter(grid, Arrays.asList(dir, Direction.UP), start, grid.height()).xLimit(5)
+		List<Block> emptyBlocks = new BlockIter(grid, Arrays.asList(dir, Direction.UP), start, grid.height() - 1)//.xLimit(5)
 				.yLimit(0).type(Type.EMPTY).listLimit(difference).toList();
 		Collections.shuffle(emptyBlocks);
 
@@ -114,7 +114,7 @@ public class GridController {
 		int count = 0;
 		for (int y = 0; y < grid.height(); y++) {
 			Block block = grid.get(x, y);
-			if (block.isCheese())
+			if (block != null && block.isCheese())
 				count++;
 		}
 		return count;
@@ -124,7 +124,7 @@ public class GridController {
 		int count = 0;
 		for (int y = 0; y < grid.height(); y++) {
 			Block block = grid.get(x, y);
-			if (block.isMouse() && (team == null || block.isTeam(team)))
+			if (block != null && block.isMouse() && (team == null || block.isTeam(team)))
 				count++;
 		}
 		return count;
@@ -134,7 +134,7 @@ public class GridController {
 		int count = 0;
 		for (int x = 0; x < grid.width(); x++) {
 			Block block = grid.get(x, y);
-			if (block.isMouse() && (team == null || block.isTeam(team)))
+			if (block != null && block.isMouse() && (team == null || block.isTeam(team)))
 				count++;
 		}
 		return count;

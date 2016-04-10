@@ -31,6 +31,9 @@ public class CheeseGrid {
 	 */
 	public CheeseGrid(int width, int height, int micePerTeam) {
 		this.grid = new Block[width][height];
+		for (int x=0; x < width; x++)
+			for (int y=0; y < height; y++)
+				this.grid[x][y] = null;
 		this.cache = new HashMap<>();
 		this.poles = new boolean[width];
 		this.micePerTeam = micePerTeam;
@@ -44,6 +47,10 @@ public class CheeseGrid {
 				set(x, y, grid.get(x, y).copy());
 		this.activeTeam = grid.activeTeam();
 		this.isCopy = true;
+	}
+	
+	public GridController ctrl() {
+		return ctrl;
 	}
 
 	public int width() {
