@@ -55,4 +55,9 @@ public class MouseMove implements IOrder {
 	public SimPoint consolidate() {
 		return moves.stream().reduce(new SimPoint(0, 0), SimPoint::add);
 	}
+	
+	@Override
+	public OrderType type() {
+		return OrderType.MOUSE_MOVE;
+	}
 }

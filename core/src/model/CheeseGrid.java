@@ -4,26 +4,30 @@ import java.util.Arrays;
 import java.util.List;
 
 import control.Direction;
-import control.GridController;
 import entity.sim.Block;
 import entity.sim.Block.Type;
 import entity.sim.Mouse;
 import entity.sim.Mouse.Team;
+import gridparts.GridController;
+import gridparts.WholeGameRecording;
 
 public class CheeseGrid {
 	private Block[][] grid;
 	// private Map<Block, SimPoint> cache;
 	private boolean[] poles;
-	private int lastPole;
+	private int activePole;
 	private Team activeTeam;
 	private int micePerTeam;
 	private Integer X;
+	private Integer redHand;
+	private Integer blueHand;
 
 	private boolean isCopy;
 	private boolean isLoaded;
 	private boolean opponentWasCPU;
 
 	private GridController ctrl;
+	private WholeGameRecording recording;
 
 	/**
 	 * Moves and stores blocks -- does NOT handle graphics
@@ -39,6 +43,7 @@ public class CheeseGrid {
 		this.poles = new boolean[width];
 		this.micePerTeam = micePerTeam;
 		this.ctrl = new GridController(this);
+		this.recording = new WholeGameRecording();
 		this.gridID = getID();
 	}
 
@@ -96,6 +101,10 @@ public class CheeseGrid {
 
 	public Team activeTeam() {
 		return activeTeam;
+	}
+	
+	public void activeTeam(Team team) {
+		this.activeTeam = activeTeam;
 	}
 
 	public void fillVacancy(int x, int y, Team team) throws CheeseException {
@@ -199,7 +208,35 @@ public class CheeseGrid {
 		return X;
 	}
 
-	public int lastPole() {
-		return lastPole;
+	public void X(Integer x) {
+		X = x;
+	}
+
+	public int activePole() {
+		return activePole;
+	}
+	
+	public void activePole(int x) {
+		activePole = x;
+	}
+
+	public Integer redHand() {
+		return redHand;
+	}
+
+	public void redHand(Integer redHand) {
+		this.redHand = redHand;
+	}
+
+	public Integer blueHand() {
+		return blueHand;
+	}
+
+	public void blueHand(Integer blueHand) {
+		this.blueHand = blueHand;
+	}
+	
+	public WholeGameRecording recording() {
+		return recording;
 	}
 }

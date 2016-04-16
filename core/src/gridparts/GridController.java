@@ -1,4 +1,4 @@
-package control;
+package gridparts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import control.BlockIter;
+import control.Direction;
 import entity.sim.Block;
 import entity.sim.Block.Type;
 import entity.sim.Mouse;
@@ -117,21 +119,27 @@ public class GridController {
 	}
 
 	private String print() {
+		return print(false);
+	}
+
+	private String print(boolean pretty) {
 		StringBuilder printed = new StringBuilder();
 		for (int y = 0; y < grid.height(); y++) {
-			for (int x = 0; x < grid.width(); x++)
+			for (int x = 0; x < grid.width(); x++) {
 				switch (grid.get(x, y).type()) {
 				case CHEESE:
-					printed.append("#");
+					printed.append('#');
 					break;
 				case EMPTY:
-					printed.append(".");
+					printed.append('.');
 					break;
 				case MOUSE:
-					printed.append(grid.get(x, y).isRedMouse() ? "r" : "b");
+					printed.append(grid.get(x, y).isRedMouse() ? 'r' : 'b');
 					break;
 				}
-			printed.append("\n");
+				printed.append(' ');
+			}
+			printed.append('\n');
 		}
 		return printed.toString();
 	}
@@ -150,7 +158,7 @@ public class GridController {
 		return count;
 	}
 
-	private int columnMouseCount(int x, Team team) {
+	public int columnMouseCount(int x, Team team) {
 		int count = 0;
 		for (int y = 0; y < grid.height(); y++) {
 			Block block = grid.get(x, y);
@@ -184,7 +192,7 @@ public class GridController {
 	}
 
 	public boolean poleIsAvailable(int x) {
-		boolean poleIsBlocked = grid.X() != null && x == grid.lastPole();
+		boolean poleIsBlocked = grid.X() != null && x == grid.activePole();
 		return !poleIsBlocked && grid.poles()[x];
 	}
 
