@@ -1,6 +1,5 @@
 package control;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -94,8 +93,10 @@ public class GridController {
 			dir = Direction.RIGHT;
 		}
 
-		List<Block> emptyBlocks = new BlockIter(grid, Arrays.asList(dir, Direction.UP), start, grid.height() - 1)//.xLimit(5)
-				.yLimit(0).type(Type.EMPTY).listLimit(difference).toList();
+		BlockIter iter = new BlockIter(grid, Arrays.asList(Direction.UP, dir), start, grid.height() - 1).xLimit(5)
+				.yLimit(0).type(Type.EMPTY).side(team).listLimit(difference);
+
+		List<Block> emptyBlocks = iter.toList();
 		Collections.shuffle(emptyBlocks);
 
 		for (int i = 0; i < difference; i++) {
@@ -104,6 +105,26 @@ public class GridController {
 
 			grid.fillVacancy(esp.x(), esp.y(), team);
 		}
+	}
+
+	private String print() {
+		StringBuilder printed = new StringBuilder();
+		for (int y = 0; y < grid.height(); y++) {
+			for (int x = 0; x < grid.width(); x++)
+				switch (grid.get(x, y).type()) {
+				case CHEESE:
+					printed.append("#");
+					break;
+				case EMPTY:
+					printed.append(".");
+					break;
+				case MOUSE:
+					printed.append(grid.get(x, y).isRedMouse() ? "r" : "b");
+					break;
+				}
+			printed.append("\n");
+		}
+		return printed.toString();
 	}
 
 	private void valueBoard() {
@@ -197,12 +218,12 @@ public class GridController {
 			move = findFirstMove(copygrid, nonactiveTeam, false);
 			if (results.add(move))
 				continue;
-			
+
 			/** if no moves found, stop */
 			break;
 		}
-		
-		//TODO: do something with orders 'result'
+
+		// TODO: do something with orders 'result'
 	}
 
 	private static MouseMove findFirstMove(CheeseGrid copygrid, List<Mouse> mice, boolean fallsOnly)

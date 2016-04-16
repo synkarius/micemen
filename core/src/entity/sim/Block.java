@@ -63,7 +63,7 @@ public abstract class Block {
 	public boolean isBlueMouse() {
 		return isMouse() && ((Mouse) this).team() == Team.BLUE;
 	}
-	
+
 	public boolean isTeam(Team team) {
 		return isMouse() && ((Mouse) this).team() == team;
 	}

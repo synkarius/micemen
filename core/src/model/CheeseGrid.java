@@ -1,9 +1,7 @@
 package model;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import control.Direction;
 import control.GridController;
@@ -13,7 +11,7 @@ import entity.sim.Mouse.Team;
 
 public class CheeseGrid {
 	private Block[][] grid;
-	private Map<Block, SimPoint> cache;
+	// private Map<Block, SimPoint> cache;
 	private boolean[] poles;
 	private int lastPole;
 	private Team activeTeam;
@@ -23,18 +21,18 @@ public class CheeseGrid {
 	private boolean isCopy;
 	private boolean isLoaded;
 	private boolean opponentWasCPU;
-	
+
 	private GridController ctrl;
-	
+
 	/**
 	 * Moves and stores blocks -- does NOT handle graphics
 	 */
 	public CheeseGrid(int width, int height, int micePerTeam) {
 		this.grid = new Block[width][height];
-		for (int x=0; x < width; x++)
-			for (int y=0; y < height; y++)
+		for (int x = 0; x < width; x++)
+			for (int y = 0; y < height; y++)
 				this.grid[x][y] = null;
-		this.cache = new HashMap<>();
+		// this.cache = new HashMap<>();
 		this.poles = new boolean[width];
 		this.micePerTeam = micePerTeam;
 		this.ctrl = new GridController(this);
@@ -48,7 +46,7 @@ public class CheeseGrid {
 		this.activeTeam = grid.activeTeam();
 		this.isCopy = true;
 	}
-	
+
 	public GridController ctrl() {
 		return ctrl;
 	}
@@ -72,19 +70,21 @@ public class CheeseGrid {
 
 		Mouse mouse = new Mouse(team);
 		grid[x][y] = mouse;
-
-		cache.put(mouse, new SimPoint(x, y));
-		cache.remove(replaced);
 	}
 
 	public void eliminate(Mouse mouse) {
-		SimPoint p = cache.get(mouse);
+		SimPoint p = get(mouse);
 		Block empty = new EmptyBlock();
 
 		grid[p.x()][p.y()] = empty;
+	}
 
-		cache.put(empty, p);
-		cache.remove(mouse);
+	public SimPoint get(Block block) {
+		for (int x = 0; x < width(); x++)
+			for (int y = 0; y < height(); y++)
+				if (get(x, y).equals(block))
+					return new SimPoint(x, y);
+		return null;
 	}
 
 	public void shift(Direction dir, int x) {
@@ -117,11 +117,6 @@ public class CheeseGrid {
 				}
 			}
 		}
-		
-		// update cache
-		for (int y2 = 0; y2 < height(); y2++) {
-			cache.put(get(x, y2), new SimPoint(x, y2));
-		}
 	}
 
 	public void switcH(Block blockA, Block blockB) {
@@ -130,9 +125,6 @@ public class CheeseGrid {
 
 		grid[a.x()][a.y()] = blockB;
 		grid[b.x()][b.y()] = blockA;
-
-		cache.put(blockA, b);
-		cache.put(blockB, a);
 	}
 
 	/** for initial sets only -- no longer for updates */
@@ -141,15 +133,10 @@ public class CheeseGrid {
 			throw new CheeseException("Do not use 'set' for updates.");
 
 		grid[x][y] = block;
-		cache.put(block, new SimPoint(x, y));
 	}
 
 	public Block get(int x, int y) {
 		return grid[x][y];
-	}
-
-	public SimPoint get(Block block) {
-		return cache.get(block);
 	}
 
 	public boolean contains(int x, int y) {

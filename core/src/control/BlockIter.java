@@ -6,6 +6,7 @@ import java.util.List;
 
 import entity.sim.Block;
 import entity.sim.Block.Type;
+import entity.sim.Mouse.Team;
 import model.CheeseGrid;
 
 public class BlockIter implements Iterator<Block> {
@@ -26,6 +27,9 @@ public class BlockIter implements Iterator<Block> {
 
 	private Type blocktype;
 
+	private Team side;
+	private int halfway;
+
 	/** controls how many get returned */
 	private int listLimit;
 
@@ -34,6 +38,7 @@ public class BlockIter implements Iterator<Block> {
 		this.dirs = dirs;
 		this.x = x;
 		this.y = y;
+		this.halfway = grid.width() / 2;
 	}
 
 	/** optional param */
@@ -51,6 +56,12 @@ public class BlockIter implements Iterator<Block> {
 	/** optional param */
 	public BlockIter type(Type type) {
 		this.blocktype = type;
+		return this;
+	}
+
+	/** optional param -- side of the team, not mice of the team */
+	public BlockIter side(Team side) {
+		this.side = side;
 		return this;
 	}
 
@@ -89,7 +100,12 @@ public class BlockIter implements Iterator<Block> {
 	}
 
 	private Block currentBlock() {
-		boolean edgeOfGrid = x < 0 || x >= grid.width() || y < 0 || y > grid.height();
+		/** edge of grid check 
+		 * -- you will never be gathering empty blocks 
+		 *    or mice from the very first or last columns */
+		boolean edgeOfGrid = x <= 0 || x >= grid.width() - 1 || y < 0 || y > grid.height() - 1;
+
+		/** limits check */
 		boolean limits = false;
 		boolean xLimitExists = lx != 0;
 		boolean exceedXLimit = tx + 1 > lx;
@@ -115,7 +131,17 @@ public class BlockIter implements Iterator<Block> {
 			}
 		}
 
-		if (edgeOfGrid || limits) {
+		/** side check */
+		boolean forSide = side != null;
+		boolean wrongSide = false;
+		if (forSide) {
+			if (side == Team.RED && x > halfway)
+				wrongSide = true;
+			else if (side == Team.BLUE && x < halfway)
+				wrongSide = true;
+		}
+
+		if (edgeOfGrid || limits || wrongSide) {
 			return null;
 		}
 
@@ -143,13 +169,16 @@ public class BlockIter implements Iterator<Block> {
 			break;
 		case DOWN:
 			cy += 1;
-			ty += 1;break;
+			ty += 1;
+			break;
 		case LEFT:
 			cx -= 1;
-			tx += 1;break;
+			tx += 1;
+			break;
 		case RIGHT:
 			cx += 1;
-			tx += 1;break;
+			tx += 1;
+			break;
 		default:
 			cy += 0;
 		}
@@ -168,22 +197,26 @@ public class BlockIter implements Iterator<Block> {
 						cx = ox;
 						tx = 0;
 						cy -= 1;
-						ty += 1;break;
+						ty += 1;
+						break;
 					case DOWN:
 						cx = ox;
 						tx = 0;
 						cy += 1;
-						ty += 1;break;
+						ty += 1;
+						break;
 					case LEFT:
 						cy = oy;
 						ty = 0;
 						cx -= 1;
-						tx += 1;break;
+						tx += 1;
+						break;
 					case RIGHT:
 						cy = oy;
 						ty = 0;
 						cx += 1;
-						tx += 1;break;
+						tx += 1;
+						break;
 					default:
 						cy += 0;
 					}
