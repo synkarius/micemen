@@ -23,6 +23,8 @@ public class MainGame extends ApplicationAdapter {
 		grid = new CheeseGrid(21, 13, 12);
 		try {
 			grid.ctrl().fillGrid();
+			grid.ctrl().recalculateMoves();
+			grid.ctrl().executeAll();
 		} catch (CheeseException e) {
 			e.printStackTrace();
 		}

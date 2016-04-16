@@ -1,5 +1,6 @@
 package control;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import util.NonNullList;
 public class GridController {
 
 	private CheeseGrid grid;
+	private List<IOrder> orders;
 
 	private static final Map<Integer, List<Boolean>> PLACEMENT = new HashMap<>();
 	static {
@@ -41,6 +43,11 @@ public class GridController {
 
 	public GridController(CheeseGrid grid) {
 		this.grid = grid;
+		this.orders = new ArrayList<>();
+	}
+
+	public List<IOrder> orders() {
+		return orders;
 	}
 
 	public void fillGrid() throws CheeseException {
@@ -49,23 +56,23 @@ public class GridController {
 
 		for (int x = 0; x < grid.width(); x++) {
 			for (int y = 0; y < grid.height(); y++) {
-				Block result = new EmptyBlock();
+				Block result = new EmptyBlock(grid);
 
 				if (PLACEMENT.containsKey(x)) {
 					if (PLACEMENT.get(x).get(y))
-						result = new CheeseBlock();
+						result = new CheeseBlock(grid);
 				} else if (columnCheeseCount(x) < CHEESE_WALL && Math.random() > .45) {
-					result = new CheeseBlock();
+					result = new CheeseBlock(grid);
 				} else {
 					boolean placeMouse = Math.random() > .4;
 					if (placeMouse && !VERBOTEN.contains(x)) {
 						if (x < 8 && redCount < grid.micePerTeam() && columnMouseCount(x, Team.RED) < 2
 								&& rowMouseCount(y, Team.RED) == 0) {
-							result = new Mouse(Team.RED);
+							result = new Mouse(Team.RED, grid);
 							redCount += 1;
 						} else if (x > 12 && blueCount < grid.micePerTeam() && columnMouseCount(x, Team.BLUE) < 2
 								&& rowMouseCount(y, Team.BLUE) == 0) {
-							result = new Mouse(Team.BLUE);
+							result = new Mouse(Team.BLUE, grid);
 							blueCount += 1;
 						}
 					}
@@ -93,8 +100,10 @@ public class GridController {
 			dir = Direction.RIGHT;
 		}
 
-		BlockIter iter = new BlockIter(grid, Arrays.asList(Direction.UP, dir), start, grid.height() - 1).xLimit(5)
-				.yLimit(0).type(Type.EMPTY).side(team).listLimit(difference);
+		BlockIter iter = new BlockIter(grid, Arrays.asList(Direction.UP, dir), start, grid.hMax()).xLimit(5).yLimit(0)
+				.type(Type.EMPTY)
+				// .side(team)
+				.listLimit(difference);
 
 		List<Block> emptyBlocks = iter.toList();
 		Collections.shuffle(emptyBlocks);
@@ -180,41 +189,42 @@ public class GridController {
 	}
 
 	public void recalculateMoves() throws CheeseException {
-		CheeseGrid copygrid = null;
+		CheeseGrid copygrid = new CheeseGrid(grid);
 		Team newActiveTeam = grid.activeTeam() == Team.RED ? Team.BLUE : Team.RED;
 
-		List<IOrder> results = new NonNullList<>();
+		List<IOrder> newOrders = recalc(copygrid, newActiveTeam);
+
+		orders.addAll(newOrders);
+	}
+
+	private static List<IOrder> recalc(CheeseGrid copygrid, Team newActiveTeam) throws CheeseException {
+		final List<IOrder> results = new NonNullList<>();
+		final boolean red = newActiveTeam == Team.RED;
+		final Direction activeDir = red ? Direction.LEFT : Direction.RIGHT, //
+				inactiveDir = !red ? Direction.LEFT : Direction.RIGHT;
+		final int activeStart = red ? copygrid.wMax() : 0, //
+				inActiveStart = !red ? copygrid.wMax() : 0;
 
 		while (true) {
-			/**
-			 * the copygrid-null mechanism here is so we don't keep queueing up
-			 * the same set of moves forever
-			 */
-			if (copygrid == null)
-				copygrid = new CheeseGrid(grid);
-
-			boolean red = newActiveTeam == Team.RED;
-			Direction dir = red ? Direction.LEFT : Direction.RIGHT;
-			int start = red ? copygrid.width() : 0;
 
 			/** first, look for falls */
-			List<Mouse> allMice = getAllMiceWithDirection(Direction.UP, dir, start, copygrid.height());
+			List<Mouse> allMice = copygrid.ctrl().getAllMiceWithDirection(Direction.UP, activeDir, activeStart,
+					copygrid.hMax());
 			MouseMove move = findFirstMove(copygrid, allMice, true);
 			if (results.add(move))
 				continue;
 
 			/** the active team then moves */
-			List<Mouse> activeTeam = allMice.stream().filter(mouse -> active(mouse, true)).collect(Collectors.toList());
+			List<Mouse> activeTeam = allMice.stream().filter(mouse -> active(mouse, true, newActiveTeam))
+					.collect(Collectors.toList());
 			move = findFirstMove(copygrid, activeTeam, false);
 			if (results.add(move))
 				continue;
 
 			/** non-active team last */
-			boolean other = newActiveTeam != Team.RED;
-			dir = other ? Direction.LEFT : Direction.RIGHT;
-			start = other ? copygrid.width() : 0;
-			List<Mouse> nonactiveTeam = getAllMiceWithDirection(Direction.UP, dir, start, copygrid.height()).stream()
-					.filter(mouse -> active(mouse, false)).collect(Collectors.toList());
+			List<Mouse> nonactiveTeam = copygrid.ctrl()
+					.getAllMiceWithDirection(Direction.UP, inactiveDir, inActiveStart, copygrid.hMax()).stream()
+					.filter(mouse -> active(mouse, false, newActiveTeam)).collect(Collectors.toList());
 			move = findFirstMove(copygrid, nonactiveTeam, false);
 			if (results.add(move))
 				continue;
@@ -223,7 +233,7 @@ public class GridController {
 			break;
 		}
 
-		// TODO: do something with orders 'result'
+		return results;
 	}
 
 	private static MouseMove findFirstMove(CheeseGrid copygrid, List<Mouse> mice, boolean fallsOnly)
@@ -260,20 +270,24 @@ public class GridController {
 		return mice.stream().filter(mouse -> mouse.isTeam(team)).collect(Collectors.toList());
 	}
 
-	private List<Mouse> getAllMiceUpDown(boolean active) {
-		/**
-		 * Gets all mice on team whose turn it is, or whose turn it isn't
-		 */
-		return getAllMice().stream().filter(mouse -> active(mouse, active)).collect(Collectors.toList());
-	}
-
-	private boolean active(Mouse block, boolean getUp) {
-		boolean result = grid.activeTeam() == Team.RED && block.isRedMouse()
-				|| grid.activeTeam() == Team.BLUE && block.isBlueMouse();
+	private static boolean active(Mouse block, boolean getUp, Team team) {
+		boolean result = (team == Team.RED && block.isRedMouse()) || (team == Team.BLUE && block.isBlueMouse());
 		if (getUp)
 			return result;
 		else
 			return !result;
+	}
+
+	public void executeAll() {
+		while (orders.size() > 0)
+			executeNext();
+	}
+
+	public void executeNext() {
+		IOrder order = orders.get(0);
+		order.execute(grid);
+		if (order.finished())
+			orders.remove(order);
 	}
 
 }

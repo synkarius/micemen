@@ -6,6 +6,7 @@ import java.util.List;
 import control.Direction;
 import control.GridController;
 import entity.sim.Block;
+import entity.sim.Block.Type;
 import entity.sim.Mouse;
 import entity.sim.Mouse.Team;
 
@@ -29,22 +30,48 @@ public class CheeseGrid {
 	 */
 	public CheeseGrid(int width, int height, int micePerTeam) {
 		this.grid = new Block[width][height];
-		for (int x = 0; x < width; x++)
-			for (int y = 0; y < height; y++)
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
 				this.grid[x][y] = null;
+			}
+		}
 		// this.cache = new HashMap<>();
 		this.poles = new boolean[width];
 		this.micePerTeam = micePerTeam;
 		this.ctrl = new GridController(this);
+		this.gridID = getID();
 	}
 
 	public CheeseGrid(CheeseGrid grid) throws CheeseException {
 		this(grid.width(), grid.height(), grid.micePerTeam());
-		for (int x = 0; x < width(); x++)
-			for (int y = 0; y < height(); y++)
-				set(x, y, grid.get(x, y).copy());
+		for (int x = 0; x < width(); x++) {
+			for (int y = 0; y < height(); y++) {
+				Block oldBlock = grid.get(x, y);
+				if (oldBlock.type() == Type.MOUSE) {
+					set(x, y, new Mouse((Mouse) oldBlock, this));
+				} else if (oldBlock.type() == Type.CHEESE) {
+					set(x, y, new CheeseBlock(this));
+				} else if (oldBlock.type() == Type.EMPTY) {
+					set(x, y, new EmptyBlock(this));
+				}
+			}
+		}
 		this.activeTeam = grid.activeTeam();
 		this.isCopy = true;
+	}
+
+	private static int nextID = 0;
+
+	protected int gridID;
+
+	public int id() {
+		return gridID;
+	}
+
+	private static int getID() {
+		if (nextID > 1000000)// 1m
+			nextID = 0;
+		return nextID++;
 	}
 
 	public GridController ctrl() {
@@ -59,6 +86,14 @@ public class CheeseGrid {
 		return grid[0].length;
 	}
 
+	public int hMax() {
+		return height() - 1;
+	}
+
+	public int wMax() {
+		return width() - 1;
+	}
+
 	public Team activeTeam() {
 		return activeTeam;
 	}
@@ -68,13 +103,13 @@ public class CheeseGrid {
 		if (!replaced.isEmpty())
 			throw new CheeseException("Can't replace a non-empty.");
 
-		Mouse mouse = new Mouse(team);
+		Mouse mouse = new Mouse(team, this);
 		grid[x][y] = mouse;
 	}
 
 	public void eliminate(Mouse mouse) {
 		SimPoint p = get(mouse);
-		Block empty = new EmptyBlock();
+		Block empty = new EmptyBlock(this);
 
 		grid[p.x()][p.y()] = empty;
 	}

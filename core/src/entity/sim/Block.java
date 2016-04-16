@@ -13,6 +13,11 @@ public abstract class Block {
 	}
 
 	private static int nextID = 0;
+	
+	protected int gridID;
+	public int gridID() {
+		return gridID;
+	}
 
 	private static int getID() {
 		if (nextID > 1000000)// 1m
@@ -24,9 +29,10 @@ public abstract class Block {
 	private int id;
 	protected Optional<SlickSprite> graphic;
 
-	public Block() {
-		id = getID();
-		graphic = Optional.empty();
+	public Block(CheeseGrid grid) {
+		this.id = getID();
+		this.gridID = grid.id();
+		this.graphic = Optional.empty();
 	}
 
 	public SimPoint pos(CheeseGrid grid) {
@@ -80,8 +86,6 @@ public abstract class Block {
 	public String toString() {
 		return this.type.toString().toLowerCase();
 	}
-
-	public abstract Block copy();
 
 	@Override
 	public boolean equals(Object o) {

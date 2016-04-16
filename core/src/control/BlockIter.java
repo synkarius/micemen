@@ -38,6 +38,8 @@ public class BlockIter implements Iterator<Block> {
 		this.dirs = dirs;
 		this.x = x;
 		this.y = y;
+		this.ox = x;
+		this.oy = y;
 		this.halfway = grid.width() / 2;
 	}
 
@@ -77,7 +79,7 @@ public class BlockIter implements Iterator<Block> {
 
 	public List<Block> toList() {
 		List<Block> result = new ArrayList<>();
-		while (this.hasNext() && notHitListLimit(result)) {
+		while (this.hasNext() && notHitListLimit(result) || false) {
 			Block block = this.next();
 			if (blocktype == null || blocktype == block.type())
 				result.add(block);
@@ -103,7 +105,7 @@ public class BlockIter implements Iterator<Block> {
 		/** edge of grid check 
 		 * -- you will never be gathering empty blocks 
 		 *    or mice from the very first or last columns */
-		boolean edgeOfGrid = x <= 0 || x >= grid.width() - 1 || y < 0 || y > grid.height() - 1;
+		boolean edgeOfGrid = x < 0 || x > grid.wMax() || y < 0 || y > grid.hMax();
 
 		/** limits check */
 		boolean limits = false;
@@ -184,7 +186,7 @@ public class BlockIter implements Iterator<Block> {
 		}
 
 		if (d2 != null) {
-			boolean edgeOfGrid = cx < 0 || cx >= grid.width() || cy < 0 || cy >= grid.height();
+			boolean edgeOfGrid = cx < 0 || cx > grid.wMax() || cy < 0 || cy > grid.hMax();
 
 			if (edgeOfGrid || hitLimit1) {
 				boolean d2IsXAxis = d2 == Direction.LEFT || d2 == Direction.RIGHT;
