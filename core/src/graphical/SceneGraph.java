@@ -23,9 +23,7 @@ public class SceneGraph {
     public static final int   MENU_TEXT_X_OFFSET = X_OFFSET + 30,
             MENU_MESSAGE_X_OFFSET = (int) (WIDTH - X_OFFSET - 170);
     public static final int   MENU_TEXT_Y        = 20;
-    
-    public SceneGraph() {
-    }
+    public static final float   HAND_OFFSET_X      = (float) 7.5, HAND_OFFSET_Y = 10;
     
     public static int flipY(CheeseGrid grid, int y) {
         return Math.abs(grid.height() - y - 1);
@@ -69,6 +67,13 @@ public class SceneGraph {
         for (int p = 0; p < grid.poles().length; p++)
             if (grid.poles()[p])
                 batch.draw(GridGfx.pole, X_OFFSET + POLE_OFFSET_X + p * BLOCK_SIZE, POLE_HEIGHT_Y);
+        
+        if (grid.redHand() != null)
+            batch.draw(GridGfx.redHand, X_OFFSET + HAND_OFFSET_X + grid.redHand() * BLOCK_SIZE,
+                    POLE_HEIGHT_Y + HAND_OFFSET_Y);
+        else if (grid.blueHand() != null)
+            batch.draw(GridGfx.blueHand, X_OFFSET + HAND_OFFSET_X + grid.blueHand() * BLOCK_SIZE,
+                    POLE_HEIGHT_Y + HAND_OFFSET_Y);
         
     }
     

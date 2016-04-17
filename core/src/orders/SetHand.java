@@ -41,7 +41,8 @@ public class SetHand implements IOrder {
         Direction dir = x < 0 ? Direction.LEFT : Direction.RIGHT;
         
         List<Integer> gridIndices = new ArrayList<>();
-        for (int i = 0; i < grid.width(); i++)
+        for (int i = 2; i < grid.width() - 2; i++) // first and last two columns
+                                                   // should never be available
             gridIndices.add(i);
         if (dir == Direction.LEFT)
             Collections.reverse(gridIndices);
@@ -61,9 +62,10 @@ public class SetHand implements IOrder {
                 }
             }
         }
-        
-        grid.activePole(available);
-        handSet.accept(available);
+        if (available != 0) {
+            grid.activePole(available);
+            handSet.accept(available);
+        }
     }
     
     @Override
