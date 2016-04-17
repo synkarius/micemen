@@ -33,7 +33,7 @@ public class ComputerPlayerBasic extends ComputerPlayer implements IController {
         
         Combo combo = new Combo();
         combo.add(new ColumnShift(best.x(), best.dir()));
-        combo.add(new SetHand());
+        combo.add(new SetHand(grid, best.x()));
         
         grid.activePole(best.x());
         

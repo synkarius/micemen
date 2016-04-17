@@ -1,9 +1,15 @@
 package control;
 
+import model.CheeseException;
 import model.CheeseGrid;
 import model.Mouse.Team;
+import orders.ColumnShift;
 import orders.IOrder;
 import orders.PassTurn;
+import orders.SetHand;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 
 public class KeyboardController implements IController {
     
@@ -43,12 +49,12 @@ public class KeyboardController implements IController {
         return this;
     }
     
-    public KeyboardController setOpponent(boolean config) {
-        if (config) {
-            
-        } else {
-            
-        }
+    public KeyboardController setOpponent(boolean cpu) {
+        IController blue = this;
+        if (cpu)
+            blue = new ComputerPlayerBasic().grid(grid).team(Team.BLUE);
+        setControllers(this, blue);
+        
         return this;
     }
     
@@ -86,9 +92,151 @@ public class KeyboardController implements IController {
                 || mode == ControlMode.CONFIRM_LOAD || mode == ControlMode.CONFIRM_QUIT;
     }
     
+    public void processInput() throws CheeseException {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F12)) {
+            // TODO: switch to simulator
+        }
+        
+        if (isNewGameChoices()) {
+            
+            // CHOOSE OPPONENT
+            if (!controllersAreSetUp()) {
+                boolean choseCPU = false;
+                
+                if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
+                    // human
+                    setControllers(this, this);
+                } else if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
+                    // cpu
+                    setControllers(this, new ComputerPlayerBasic().grid(grid).team(Team.BLUE));
+                    choseCPU = true;
+                } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+                    // cpu vs cpu
+                    setControllers(new ComputerPlayerBasic().grid(grid).team(Team.RED),
+                            new ComputerPlayerBasic().grid(grid).team(Team.BLUE));
+                }
+                if (controllersAreSetUp()) {
+                    if (choseCPU) {
+                        mode = ControlMode.CHOOSE_DIFFICULTY;
+                        // TODO: grid.menu.chooseDifficulty();
+                    } else {
+                        startGame(null);
+                    }
+                }
+            } else {
+                // CHOOSE DIFFICULTY OR START
+                
+                boolean chose = false;
+                
+                // TODO: actual difficulty differences
+                if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
+                    chose = true;
+                } else if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
+                    chose = true;
+                } else if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                    chose = true;
+                }
+                
+                if (chose)
+                    startGame(null);
+            }
+        } else if (isMenuConfirm()) {
+            // CONFIRM MENU CHOICES
+            
+            boolean saidYes = Gdx.input.isKeyJustPressed(Input.Keys.Y);
+            boolean saidNo = Gdx.input.isKeyJustPressed(Input.Keys.N);
+            
+            if (saidNo) {
+                mode = ControlMode.GAME;
+                // TODO: grid.menu.menu();
+            } else if (saidYes) {
+                if (mode == ControlMode.CONFIRM_NEW_GAME) {
+                    // TODO: Board.newGame()
+                    return;
+                } else if (mode == ControlMode.CONFIRM_SAVE) {
+                    // TODO: board.saveGame(grid, blue);
+                } else if (mode == ControlMode.CONFIRM_LOAD) {
+                    CheeseGrid load = null;// TODO = Board.loadFromSave();
+                    if (load != null) {
+                        // TODO: board.newGame(load);
+                    }
+                } else if (mode == ControlMode.CONFIRM_QUIT) {
+                    System.exit(0);
+                }
+                mode = ControlMode.GAME;
+                // TODO: grid.menu.menu();
+            }
+        } else if (mode == ControlMode.GAME_OVER) {
+            // GAME OVER
+            
+            boolean saidYes = Gdx.input.isKeyJustPressed(Input.Keys.Y);
+            boolean saidNo = Gdx.input.isKeyJustPressed(Input.Keys.N);
+            
+            if (saidYes) {
+                // TODO: board.newgame
+            } else if (saidNo) {
+                System.exit(0);
+            }
+        } else if (mode == ControlMode.GAME) {
+            // PLAY THE GAME
+            
+            int redScore = grid.ctrl().score(Team.RED);
+            int blueScore = grid.ctrl().score(Team.BLUE);
+            boolean unprocessedOrdersExist = grid.ctrl().orders().size() > 0;
+            boolean gameIsOver = (redScore == grid.micePerTeam() || blueScore == grid.micePerTeam())
+                    && !unprocessedOrdersExist;
+            
+            if (gameIsOver) {
+                Team winner = redScore > blueScore ? Team.RED : Team.BLUE;
+                
+                mode = ControlMode.GAME_OVER;
+                // TODO: grid.menu.gameOverWithWinner(winner);
+            } else {
+                if (unprocessedOrdersExist) {
+                    grid.ctrl().executeNext();
+                } else {
+                    IOrder move = grid.activeTeam() == Team.RED ? red.getOrder() : blue.getOrder();
+                    if (move != null) {
+                        grid.ctrl().orders().add(move);
+                    } else {
+                        // TODO: grid.randomMouseEatsCheese();
+                    }
+                }
+            }
+        }
+    }
     
     @Override
     public IOrder getOrder() {
+        
+        int x = grid.activePole();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
+            return new ColumnShift(x, Direction.UP);
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN)) {
+            return new ColumnShift(x, Direction.DOWN);
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT)) {
+            if (x - 1 >= 0)
+                return new SetHand(grid, -1, true);
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+            if (x - 1 <= grid.wMax())
+                return new SetHand(grid, 1, true);
+        }
+        
+        // USER PRESSED A MENU KEY
+        if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
+            mode = ControlMode.CONFIRM_NEW_GAME;
+            // TODO: grid.menu.confirmNewGame();
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+            mode = ControlMode.CONFIRM_SAVE;
+            // TODO: grid.menu.confirmSave();
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
+            mode = ControlMode.CONFIRM_LOAD;
+            // TODO: grid.menu.confirmLoad();
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
+            mode = ControlMode.CONFIRM_QUIT;
+            // TODO: grid.menu.confirmQuit();
+        }
+        
         return null;
     }
     

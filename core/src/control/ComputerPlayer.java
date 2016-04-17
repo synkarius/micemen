@@ -32,7 +32,7 @@ public class ComputerPlayer implements IController {
         int select = (int) (Math.random() * choices.size());
         ColumnShift choice = choices.get(select);
         
-        Combo combo = new Combo().add(choice).add(new SetHand());
+        Combo combo = new Combo().add(choice).add(new SetHand(grid, choice.x()));
         
         return combo;
     }
