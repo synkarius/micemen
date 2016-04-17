@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import graphical.GridGfx;
 import graphical.SceneGraph;
@@ -20,13 +21,17 @@ public class MainGame extends ApplicationAdapter {
     CheeseGrid         grid;
     OrthographicCamera camera;
     BitmapFont         font;
+    FitViewport        viewport;
     
     @Override
     public void create() {
-        camera = new OrthographicCamera(SceneGraph.WIDTH, SceneGraph.HEIGHT);
-        camera.setToOrtho(false, SceneGraph.WIDTH, SceneGraph.HEIGHT);
+        
         batch = new SpriteBatch();
-        batch.setProjectionMatrix(camera.combined);
+        camera = new OrthographicCamera(SceneGraph.WIDTH, SceneGraph.HEIGHT);
+        viewport = new FitViewport(SceneGraph.WIDTH, SceneGraph.HEIGHT, camera);
+        viewport.apply();
+        
+        
         shaper = new ShapeRenderer();
         shaper.setProjectionMatrix(batch.getProjectionMatrix());
         font = new BitmapFont();
@@ -41,6 +46,7 @@ public class MainGame extends ApplicationAdapter {
         } catch (CheeseException e) {
             e.printStackTrace();
         }
+        
     }
     
     @Override
@@ -59,5 +65,10 @@ public class MainGame extends ApplicationAdapter {
         SceneGraph.drawControls(grid, batch);
         SceneGraph.drawText(grid, batch, font);
         batch.end();
+    }
+    
+    @Override
+    public void resize(int width, int height) {
+        viewport.update(width, height);
     }
 }
