@@ -10,33 +10,33 @@ import model.CheeseException;
 import model.CheeseGrid;
 
 public class MainGame extends ApplicationAdapter {
-	SpriteBatch batch;
-	Texture img;
-	
-	CheeseGrid grid;
-	
-	@Override
-	public void create () {
-		batch = new SpriteBatch();
-		img = new Texture("bg.png");
-		
-		grid = new CheeseGrid(21, 13, 12);
-		try {
-			grid.ctrl().fillGrid();
-			grid.ctrl().recalculateMoves();
-			grid.ctrl().executeAll();
-		} catch (CheeseException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void render () {
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		batch.begin();
-		batch.draw(img, 0, 0);
-		SceneGraph.drawGrid(grid, batch);
-		batch.end();
-	}
+    SpriteBatch batch;
+    Texture     img;
+    
+    CheeseGrid  grid;
+    
+    @Override
+    public void create() {
+        batch = new SpriteBatch();
+        img = new Texture("bg.png");
+        
+        grid = new CheeseGrid(21, 13, 12);
+        try {
+            grid.ctrl().fillGrid();
+            grid.ctrl().recalculateMoves();
+            grid.ctrl().executeAll();
+        } catch (CheeseException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @Override
+    public void render() {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        batch.begin();
+        batch.draw(img, 0, 0);
+        SceneGraph.drawGrid(grid, batch);
+        batch.end();
+    }
 }
