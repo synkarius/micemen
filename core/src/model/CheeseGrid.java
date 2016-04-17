@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import control.Direction;
+import graphical.GridGfx.Graphic;
+import gridparts.GfxState;
 import gridparts.GridController;
 import gridparts.WholeGameRecording;
 import model.Block.Type;
@@ -25,8 +27,13 @@ public class CheeseGrid {
     private boolean            opponentWasCPU;
     private boolean            isGraphical;
     
+    /**
+     * break up the jobs of the grid into 4 parts: display, control, recording,
+     * model
+     */
     private GridController     ctrl;
     private WholeGameRecording recording;
+    private GfxState           state;
     
     /**
      * Moves and stores blocks -- does NOT handle graphics
@@ -43,6 +50,7 @@ public class CheeseGrid {
         this.micePerTeam = micePerTeam;
         this.ctrl = new GridController(this);
         this.recording = new WholeGameRecording();
+        this.state = new GfxState(this);
         this.gridID = getID();
     }
     
@@ -78,8 +86,14 @@ public class CheeseGrid {
         return nextID++;
     }
     
+    public void makeGraphical() {
+        this.isGraphical = true;
+        for (Mouse mouse : ctrl().getAllMice())
+            mouse.graphic(Graphic.STAND);
+        this.state.init();
+    }
+    
     public boolean isGraphical() {
-        //TODO: set this somewhere
         return isGraphical;
     }
     

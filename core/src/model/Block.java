@@ -1,8 +1,6 @@
 package model;
 
-import java.util.Optional;
-
-import graphical.SlickSprite;
+import graphical.GridGfx.Graphic;
 import model.Mouse.Team;
 
 public abstract class Block {
@@ -24,17 +22,17 @@ public abstract class Block {
         return nextID++;
     }
     
-    protected Type                  type;
-    private int                     id;
-    protected Optional<SlickSprite> graphic;
+    protected Type    type;
+    private int       id;
+    protected Graphic graphic;
     
     /** to simplify ColumnShift's job / decouple display and control logic */
-    public int yOffset;
+    public int        yOffset;
     
     public Block(CheeseGrid grid) {
         this.id = getID();
         this.gridID = grid.id();
-        this.graphic = Optional.empty();
+        this.graphic = null;
     }
     
     public SimPoint pos(CheeseGrid grid) {
@@ -56,8 +54,12 @@ public abstract class Block {
         return id;
     }
     
-    public Optional<SlickSprite> graphic() {
+    public Graphic graphic() {
         return graphic;
+    }
+    
+    public void graphic(Graphic graphic) {
+        this.graphic = graphic;
     }
     
     public boolean isMouse() {

@@ -2,9 +2,8 @@ package orders;
 
 import java.util.List;
 
-import com.mice.SceneGraph;
-
 import control.Direction;
+import graphical.SceneGraph;
 import model.Block;
 import model.CheeseException;
 import model.CheeseGrid;

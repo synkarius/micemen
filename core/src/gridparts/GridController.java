@@ -268,7 +268,7 @@ public class GridController {
         return null;
     }
     
-    private List<Mouse> getAllMice() {
+    public List<Mouse> getAllMice() {
         return getAllMiceWithDirection(Direction.DOWN, Direction.RIGHT, 0, 0);
     }
     
