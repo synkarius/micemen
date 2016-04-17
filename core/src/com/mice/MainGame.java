@@ -2,8 +2,12 @@ package com.mice;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 import graphical.GridGfx;
 import graphical.SceneGraph;
@@ -11,12 +15,22 @@ import model.CheeseException;
 import model.CheeseGrid;
 
 public class MainGame extends ApplicationAdapter {
-    SpriteBatch batch;
-    CheeseGrid  grid;
+    ShapeRenderer      shaper;
+    SpriteBatch        batch;
+    CheeseGrid         grid;
+    OrthographicCamera camera;
+    BitmapFont         font;
     
     @Override
     public void create() {
+        camera = new OrthographicCamera(SceneGraph.WIDTH, SceneGraph.HEIGHT);
+        camera.setToOrtho(false, SceneGraph.WIDTH, SceneGraph.HEIGHT);
         batch = new SpriteBatch();
+        batch.setProjectionMatrix(camera.combined);
+        shaper = new ShapeRenderer();
+        shaper.setProjectionMatrix(batch.getProjectionMatrix());
+        font = new BitmapFont();
+        font.setColor(Color.WHITE);
         
         grid = new CheeseGrid(21, 13, 12);
         try {
@@ -37,6 +51,13 @@ public class MainGame extends ApplicationAdapter {
         batch.begin();
         batch.draw(GridGfx.bg, SceneGraph.X_OFFSET, SceneGraph.Y_OFFSET);
         SceneGraph.drawGrid(grid, batch);
+        batch.end();
+        
+        SceneGraph.drawBoxes(shaper);
+        
+        batch.begin();
+        SceneGraph.drawControls(grid, batch);
+        SceneGraph.drawText(grid, batch, font);
         batch.end();
     }
 }

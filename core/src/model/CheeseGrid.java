@@ -122,7 +122,7 @@ public class CheeseGrid {
     }
     
     public void activeTeam(Team team) {
-        this.activeTeam = activeTeam;
+        this.activeTeam = team;
     }
     
     public void fillVacancy(int x, int y, Team team) throws CheeseException {
