@@ -12,13 +12,17 @@ import model.CheeseGrid;
 
 public class SceneGraph {
     
-    public static final int   BLOCK_SIZE    = 25;
-    public static final int   X_OFFSET      = 55;
-    public static final int   Y_OFFSET      = 100;
-    public static final float WIDTH         = 640, HEIGHT = 480;
-    public static final float BLOCKER_TOP   = 55, BLOCKER_BOTTOM = 100;
-    public static final float POLE_OFFSET_X = (float) 7.5;
-    public static final int   POLE_HEIGHT_Y = 50;
+    public static final int   BLOCK_SIZE         = 25;
+    public static final int   X_OFFSET           = 55;
+    public static final int   Y_OFFSET           = 100;
+    public static final float WIDTH              = 640, HEIGHT = 480;
+    public static final float BLOCKER_TOP        = 55, BLOCKER_BOTTOM = 100;
+    public static final float POLE_OFFSET_X      = (float) 7.5;
+    public static final int   POLE_HEIGHT_Y      = 50;
+    public static final int   RED_SCORE_OFFSET_X = X_OFFSET + 5, BLUE_SCORE_OFFSET_X = (int) (WIDTH - X_OFFSET - 20);
+    public static final int   MENU_TEXT_X_OFFSET = X_OFFSET + 30,
+            MENU_MESSAGE_X_OFFSET = (int) (WIDTH - X_OFFSET - 170);
+    public static final int   MENU_TEXT_Y        = 20;
     
     public SceneGraph() {
     }
@@ -69,6 +73,12 @@ public class SceneGraph {
     }
     
     public static void drawText(CheeseGrid grid, SpriteBatch batch, BitmapFont font) {
-        font.draw(batch, "Hello", X_OFFSET + 5, 20);
+        font.draw(batch, "" + grid.state().menu().redScore, RED_SCORE_OFFSET_X, MENU_TEXT_Y);
+        font.draw(batch, "" + grid.state().menu().blueScore, BLUE_SCORE_OFFSET_X, MENU_TEXT_Y);
+        
+        if (grid.state().menu().text != null)
+            font.draw(batch, grid.state().menu().text, MENU_TEXT_X_OFFSET, MENU_TEXT_Y);
+        if (grid.state().menu().message != null)
+            font.draw(batch, grid.state().menu().message, MENU_MESSAGE_X_OFFSET, MENU_TEXT_Y);
     }
 }

@@ -13,7 +13,7 @@ import com.badlogic.gdx.Input;
 
 public class KeyboardController implements IController {
     
-    enum ControlMode {
+    public enum ControlMode {
         CHOOSE_OPPONENT, CHOOSE_DIFFICULTY,
         
         CONFIRM_NEW_GAME, CONFIRM_SAVE, CONFIRM_LOAD, CONFIRM_QUIT,
@@ -67,7 +67,7 @@ public class KeyboardController implements IController {
     }
     
     public void startGame(Team team) {
-        // grid.menu.menu(); // TODO
+        grid.state().menu().menu();
         mode = ControlMode.GAME;
         grid.ctrl().orders().add(0, new PassTurn());
         
@@ -77,7 +77,7 @@ public class KeyboardController implements IController {
                 teamName = Team.BLUE.toString();
                 grid.ctrl().orders().add(0, new PassTurn());
             }
-            // TODO: grid.menu.message(teamName + " first")
+            grid.state().menu().message = teamName + " first";
         } else {
             grid.ctrl().orders().add(0, new PassTurn());
         }
@@ -118,7 +118,7 @@ public class KeyboardController implements IController {
                 if (controllersAreSetUp()) {
                     if (choseCPU) {
                         mode = ControlMode.CHOOSE_DIFFICULTY;
-                        // TODO: grid.menu.chooseDifficulty();
+                        grid.state().menu().chooseDifficulty();
                     } else {
                         startGame(null);
                     }
@@ -148,7 +148,7 @@ public class KeyboardController implements IController {
             
             if (saidNo) {
                 mode = ControlMode.GAME;
-                // TODO: grid.menu.menu();
+                grid.state().menu().menu();
             } else if (saidYes) {
                 if (mode == ControlMode.CONFIRM_NEW_GAME) {
                     // TODO: Board.newGame()
@@ -164,7 +164,7 @@ public class KeyboardController implements IController {
                     System.exit(0);
                 }
                 mode = ControlMode.GAME;
-                // TODO: grid.menu.menu();
+                grid.state().menu().menu();
             }
         } else if (mode == ControlMode.GAME_OVER) {
             // GAME OVER
@@ -190,7 +190,7 @@ public class KeyboardController implements IController {
                 Team winner = redScore > blueScore ? Team.RED : Team.BLUE;
                 
                 mode = ControlMode.GAME_OVER;
-                // TODO: grid.menu.gameOverWithWinner(winner);
+                grid.state().menu().gameOverWithWinner(winner);
             } else {
                 if (unprocessedOrdersExist) {
                     grid.ctrl().executeNext();
@@ -225,16 +225,16 @@ public class KeyboardController implements IController {
         // USER PRESSED A MENU KEY
         if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
             mode = ControlMode.CONFIRM_NEW_GAME;
-            // TODO: grid.menu.confirmNewGame();
+            grid.state().menu().confirmNewGame();
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
             mode = ControlMode.CONFIRM_SAVE;
-            // TODO: grid.menu.confirmSave();
+            grid.state().menu().confirmSave();
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.L)) {
             mode = ControlMode.CONFIRM_LOAD;
-            // TODO: grid.menu.confirmLoad();
+            grid.state().menu().confirmLoad();
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
             mode = ControlMode.CONFIRM_QUIT;
-            // TODO: grid.menu.confirmQuit();
+            grid.state().menu().confirmQuit();
         }
         
         return null;

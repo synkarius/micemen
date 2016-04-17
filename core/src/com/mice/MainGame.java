@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import control.KeyboardController;
+import control.KeyboardController.ControlMode;
 import graphical.GridGfx;
 import graphical.SceneGraph;
 import model.CheeseException;
@@ -23,28 +25,34 @@ public class MainGame extends ApplicationAdapter {
     BitmapFont         font;
     FitViewport        viewport;
     
+    KeyboardController input;
+    
     @Override
     public void create() {
-        
-        batch = new SpriteBatch();
-        camera = new OrthographicCamera(SceneGraph.WIDTH, SceneGraph.HEIGHT);
-        viewport = new FitViewport(SceneGraph.WIDTH, SceneGraph.HEIGHT, camera);
-        viewport.apply();
-        
-        
-        shaper = new ShapeRenderer();
-        shaper.setProjectionMatrix(batch.getProjectionMatrix());
-        font = new BitmapFont();
-        font.setColor(Color.WHITE);
+        {
+            /** libgdx screen setup */
+            batch = new SpriteBatch();
+            camera = new OrthographicCamera(SceneGraph.WIDTH, SceneGraph.HEIGHT);
+            viewport = new FitViewport(SceneGraph.WIDTH, SceneGraph.HEIGHT, camera);
+            viewport.apply();
+            shaper = new ShapeRenderer();
+            shaper.setProjectionMatrix(batch.getProjectionMatrix());
+            font = new BitmapFont();
+            font.setColor(Color.WHITE);
+        }
         
         grid = new CheeseGrid(21, 13, 12);
+        input = new KeyboardController().setMode(ControlMode.CHOOSE_OPPONENT).setGrid(grid);
+        
         try {
             grid.ctrl().fillGrid();
             grid.ctrl().recalculateMoves();
             grid.ctrl().executeAll();
             grid.makeGraphical();
+            grid.state().menu().chooseOpponent();
         } catch (CheeseException e) {
             e.printStackTrace();
+            // TODO: log error
         }
         
     }
@@ -65,6 +73,13 @@ public class MainGame extends ApplicationAdapter {
         SceneGraph.drawControls(grid, batch);
         SceneGraph.drawText(grid, batch, font);
         batch.end();
+        
+        try {
+            input.processInput();
+        } catch (CheeseException e) {
+            e.printStackTrace();
+            // TODO: log error
+        }
     }
     
     @Override

@@ -72,6 +72,10 @@ public class CheeseGrid {
         this.isCopy = true;
     }
     
+    public GfxState state() {
+        return state;
+    }
+    
     private static int nextID = 0;
     
     protected int      gridID;
