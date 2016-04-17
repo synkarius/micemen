@@ -1,7 +1,8 @@
 package control;
 
+import model.CheeseException;
 import orders.IOrder;
 
 public interface IController {
-    IOrder getOrder();
+    IOrder getOrder() throws CheeseException;
 }

@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-import entity.sim.Block;
+import model.Block;
 import model.CheeseGrid;
 
 public class SceneGraph {

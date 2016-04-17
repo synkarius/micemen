@@ -4,12 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import control.Direction;
-import entity.sim.Block;
-import entity.sim.Block.Type;
-import entity.sim.Mouse;
-import entity.sim.Mouse.Team;
 import gridparts.GridController;
 import gridparts.WholeGameRecording;
+import model.Block.Type;
+import model.Mouse.Team;
 
 public class CheeseGrid {
     private Block[][]          grid;
@@ -25,6 +23,7 @@ public class CheeseGrid {
     private boolean            isCopy;
     private boolean            isLoaded;
     private boolean            opponentWasCPU;
+    private boolean            isGraphical;
     
     private GridController     ctrl;
     private WholeGameRecording recording;
@@ -77,6 +76,11 @@ public class CheeseGrid {
         if (nextID > 1000000)// 1m
             nextID = 0;
         return nextID++;
+    }
+    
+    public boolean isGraphical() {
+        //TODO: set this somewhere
+        return isGraphical;
     }
     
     public GridController ctrl() {

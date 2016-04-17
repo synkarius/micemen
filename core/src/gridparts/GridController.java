@@ -10,15 +10,15 @@ import java.util.stream.Collectors;
 
 import control.BlockIter;
 import control.Direction;
-import entity.sim.Block;
-import entity.sim.Block.Type;
-import entity.sim.Mouse;
-import entity.sim.Mouse.Team;
+import model.Block;
 import model.CheeseBlock;
 import model.CheeseException;
 import model.CheeseGrid;
 import model.EmptyBlock;
+import model.Mouse;
 import model.SimPoint;
+import model.Block.Type;
+import model.Mouse.Team;
 import orders.IOrder;
 import orders.MouseMove;
 import util.NonNullList;
@@ -179,7 +179,7 @@ public class GridController {
         return count;
     }
     
-    private int score(Team team) {
+    public int score(Team team) {
         int miceLeft = 0;
         for (int x = 0; x < grid.width(); x++) {
             for (int y = 0; y < grid.height(); y++) {
@@ -285,6 +285,13 @@ public class GridController {
         return mice.stream().filter(mouse -> mouse.isTeam(team)).collect(Collectors.toList());
     }
     
+    public List<Block> columnCopy(int x){
+        List<Block> result = new ArrayList<>();
+        for (int y=0; y < grid.height(); y++)
+            result.add(grid.get(x, y));
+        return result;
+    }
+    
     private static boolean active(Mouse block, boolean getUp, Team team) {
         boolean result = (team == Team.RED && block.isRedMouse()) || (team == Team.BLUE && block.isBlueMouse());
         if (getUp)
@@ -293,12 +300,12 @@ public class GridController {
             return !result;
     }
     
-    public void executeAll() {
+    public void executeAll() throws CheeseException {
         while (orders.size() > 0)
             executeNext();
     }
     
-    public void executeNext() {
+    public void executeNext() throws CheeseException {
         IOrder order = orders.get(0);
         order.execute(grid);
         if (order.finished())

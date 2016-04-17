@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import control.Direction;
-import entity.sim.Mouse.Team;
 import model.CheeseGrid;
+import model.Mouse.Team;
 
 public class WholeGameRecording {
     /** recording of a single move */

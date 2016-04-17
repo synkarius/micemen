@@ -1,11 +1,9 @@
-package entity.sim;
+package model;
 
 import java.util.Optional;
 
-import entity.graphical.SlickSprite;
-import entity.sim.Mouse.Team;
-import model.CheeseGrid;
-import model.SimPoint;
+import graphical.SlickSprite;
+import model.Mouse.Team;
 
 public abstract class Block {
     public enum Type {
@@ -29,6 +27,9 @@ public abstract class Block {
     protected Type                  type;
     private int                     id;
     protected Optional<SlickSprite> graphic;
+    
+    /** to simplify ColumnShift's job / decouple display and control logic */
+    public int yOffset;
     
     public Block(CheeseGrid grid) {
         this.id = getID();

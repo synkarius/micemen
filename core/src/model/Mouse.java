@@ -1,8 +1,6 @@
-package entity.sim;
+package model;
 
-import model.CheeseException;
-import model.CheeseGrid;
-import model.SimPoint;
+import model.Block.Type;
 import orders.MouseMove;
 
 public class Mouse extends Block {

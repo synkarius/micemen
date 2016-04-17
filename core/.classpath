@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src">
+		<attributes>
+			<attribute name="FROM_GRADLE_MODEL" value="true" />
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con"
+		path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8" />
+	<classpathentry kind="lib"
+		path="C:/Users/synkarius/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.9.2/e641cb91bec06bc64d9ddf7a7d7062caceec73cd/gdx-1.9.2.jar"
+		sourcepath="C:/Users/synkarius/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.9.2/b6c7422c6740f86a9a84fdcbc4c62a1f46db317d/gdx-1.9.2-sources.jar" />
+	<classpathentry kind="output" path="bin" />
+</classpath>

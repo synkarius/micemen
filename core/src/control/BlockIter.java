@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import entity.sim.Block;
-import entity.sim.Block.Type;
-import entity.sim.Mouse.Team;
+import model.Block;
 import model.CheeseGrid;
+import model.Block.Type;
+import model.Mouse.Team;
 
 public class BlockIter implements Iterator<Block> {
     

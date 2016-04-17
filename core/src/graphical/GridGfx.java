@@ -1,4 +1,4 @@
-package entity.graphical;
+package graphical;
 
 public class GridGfx {
     

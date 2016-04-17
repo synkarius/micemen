@@ -2,8 +2,8 @@ package orders;
 
 import java.util.function.Consumer;
 
-import entity.sim.Mouse.Team;
 import model.CheeseGrid;
+import model.Mouse.Team;
 
 public class PassTurn implements IOrder {
     

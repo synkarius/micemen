@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import entity.sim.Mouse;
 import model.CheeseGrid;
 import model.EmptyBlock;
+import model.Mouse;
 import model.SimPoint;
 
 public class MouseMove implements IOrder {
