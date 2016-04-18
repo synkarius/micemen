@@ -154,34 +154,17 @@ public class CheeseGrid {
     }
     
     public void shift(Direction dir, int x) {
-        Block A = null;
-        Block B = null;
+        Block[] copy = grid[x].clone();
+        
         if (dir == Direction.DOWN) {
-            for (int y2 = 0; y2 < height(); y2++) {
-                if (y2 != height() - 1) {
-                    // if y2 is not the second to last
-                    A = get(x, y2);
-                    grid[x][y2] = B;
-                    B = get(x, y2 + 1);
-                    grid[x][y2 + 1] = A;
-                } else {
-                    // y2 is the last block
-                    grid[x][0] = B;
-                }
-            }
+            for (int y2 = 1; y2 < height(); y2++)
+                grid[x][y2] = copy[y2 - 1];
+            grid[x][0] = copy[copy.length - 1];
         } else {
-            for (int y2 = height() - 1; y2 >= 0; y2--) {
-                if (y2 != 0) {
-                    // if y2 is not the second to last
-                    A = get(x, y2);
-                    grid[x][y2] = B;
-                    B = get(x, y2 - 1);
-                    grid[x][y2 - 1] = A;
-                } else {
-                    // y2 is the last block
-                    grid[x][height() - 1] = B;
-                }
-            }
+            for (int y2 = height() - 2; y2 >= 0; y2--)
+                grid[x][y2] = copy[y2+1];
+            grid[x][grid.length-1] = copy[0];
+            
         }
     }
     
