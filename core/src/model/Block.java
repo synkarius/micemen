@@ -26,9 +26,6 @@ public abstract class Block {
     private int       id;
     protected Graphic graphic;
     
-    /** to simplify ColumnShift's job / decouple display and control logic */
-    public int        yOffset;
-    
     public Block(CheeseGrid grid) {
         this.id = getID();
         this.gridID = grid.id();

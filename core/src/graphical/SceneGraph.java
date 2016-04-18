@@ -23,14 +23,20 @@ public class SceneGraph {
     public static final int   MENU_TEXT_X_OFFSET = X_OFFSET + 30,
             MENU_MESSAGE_X_OFFSET = (int) (WIDTH - X_OFFSET - 170);
     public static final int   MENU_TEXT_Y        = 20;
-    public static final float   HAND_OFFSET_X      = (float) 7.5, HAND_OFFSET_Y = 10;
+    public static final float HAND_OFFSET_X      = (float) 7.5, HAND_OFFSET_Y = 10;
     
     public static int flipY(CheeseGrid grid, int y) {
         return Math.abs(grid.height() - y - 1);
     }
     
     public static void drawGrid(CheeseGrid grid, SpriteBatch batch) {
+        
         for (int x = 0; x < grid.width(); x++) {
+            int shiftOffset = 0;
+            if (grid.state().columnShifting != null && grid.state().columnShifting == x) {
+                shiftOffset = grid.state().yOffset;
+            }
+            
             for (int y = 0; y < grid.height(); y++) {
                 Block block = grid.get(x, y);
                 
@@ -46,7 +52,7 @@ public class SceneGraph {
                     continue;
                 }
                 
-                batch.draw(region, x * BLOCK_SIZE + X_OFFSET, _y * BLOCK_SIZE + Y_OFFSET);
+                batch.draw(region, x * BLOCK_SIZE + X_OFFSET, _y * BLOCK_SIZE + Y_OFFSET + shiftOffset);
             }
         }
     }

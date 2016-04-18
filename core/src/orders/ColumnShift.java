@@ -29,12 +29,10 @@ public class ColumnShift implements IOrder {
     @Override
     public void execute(CheeseGrid grid) throws CheeseException {
         /** update y offsets for graphical shift */
-        List<Block> column = grid.ctrl().columnCopy(x);
         int d = dir == Direction.UP ? PX_INCREMENT : -PX_INCREMENT;
-        for (Block block : column)
-            block.yOffset += d;
+        grid.state().columnShifting = x;
+        grid.state().yOffset += d;
         
-        // TODO: hand-slide up/down
         // TODO: sound
         
         pxCount += PX_INCREMENT;
@@ -49,6 +47,9 @@ public class ColumnShift implements IOrder {
             grid.activePole(x);
             grid.ctrl().recalculateMoves();
             grid.ctrl().orders().add(0, new PassTurn());
+            
+            grid.state().columnShifting = null;
+            grid.state().yOffset = 0;
             
             grid.recording().shift(dir, x);
         }
