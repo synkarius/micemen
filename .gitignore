@@ -3,3 +3,6 @@
 .settings
 *.class
 
+
+#
+/core/
