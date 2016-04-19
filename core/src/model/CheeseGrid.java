@@ -162,8 +162,8 @@ public class CheeseGrid {
             grid[x][0] = copy[copy.length - 1];
         } else {
             for (int y2 = height() - 2; y2 >= 0; y2--)
-                grid[x][y2] = copy[y2+1];
-            grid[x][grid.length-1] = copy[0];
+                grid[x][y2] = copy[y2 + 1];
+            grid[x][grid.length - 1] = copy[0];
             
         }
     }
@@ -243,5 +243,17 @@ public class CheeseGrid {
     
     public WholeGameRecording recording() {
         return recording;
+    }
+    
+    public static CheeseGrid getNewDefault() {
+        return new CheeseGrid(21, 13, 12);
+    }
+    
+    public void isLoaded(boolean b) {
+        this.isLoaded = b;
+    }
+    
+    public void opponentWasCPU(boolean b) {
+        this.opponentWasCPU = b;
     }
 }

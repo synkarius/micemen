@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import control.BlockIter;
+import control.ComputerPlayerBasic;
 import control.Direction;
 import model.Block;
 import model.CheeseBlock;
@@ -119,34 +120,17 @@ public class GridController {
         }
     }
     
-    private String print() {
-        return print(false);
-    }
-    
-    private String print(boolean pretty) {
-        StringBuilder printed = new StringBuilder();
-        for (int y = 0; y < grid.height(); y++) {
-            for (int x = 0; x < grid.width(); x++) {
-                switch (grid.get(x, y).type()) {
-                    case CHEESE:
-                        printed.append('#');
-                        break;
-                    case EMPTY:
-                        printed.append('.');
-                        break;
-                    case MOUSE:
-                        printed.append(grid.get(x, y).isRedMouse() ? 'r' : 'b');
-                        break;
-                }
-                printed.append(' ');
-            }
-            printed.append('\n');
+    public void valueBoard() {
+        int red = ComputerPlayerBasic.measureGridValue(grid, Team.RED);
+        int blue = ComputerPlayerBasic.measureGridValue(grid, Team.BLUE);
+        
+        if (red > blue) {
+            grid.state().menu().boardFavor(Team.RED, red - blue);
+        } else if (blue > red) {
+            grid.state().menu().boardFavor(Team.BLUE, blue - red);
+        } else {
+            grid.state().menu().message = "Fair Game";
         }
-        return printed.toString();
-    }
-    
-    private void valueBoard() {
-        // TODO
     }
     
     private int columnCheeseCount(int x) {
@@ -281,13 +265,9 @@ public class GridController {
                 .collect(Collectors.toList());
     }
     
-    private static List<Mouse> filterForTeam(List<Mouse> mice, Team team) {
-        return mice.stream().filter(mouse -> mouse.isTeam(team)).collect(Collectors.toList());
-    }
-    
-    public List<Block> columnCopy(int x){
+    public List<Block> columnCopy(int x) {
         List<Block> result = new ArrayList<>();
-        for (int y=0; y < grid.height(); y++)
+        for (int y = 0; y < grid.height(); y++)
             result.add(grid.get(x, y));
         return result;
     }

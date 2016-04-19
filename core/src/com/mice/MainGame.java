@@ -1,5 +1,8 @@
 package com.mice;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -18,14 +21,16 @@ import model.CheeseException;
 import model.CheeseGrid;
 
 public class MainGame extends ApplicationAdapter {
-    ShapeRenderer      shaper;
-    SpriteBatch        batch;
-    CheeseGrid         grid;
-    OrthographicCamera camera;
-    BitmapFont         font;
-    FitViewport        viewport;
+    private static final Logger log = Logger.getLogger(MainGame.class.getName());
     
-    KeyboardController input;
+    ShapeRenderer               shaper;
+    SpriteBatch                 batch;
+    CheeseGrid                  grid;
+    OrthographicCamera          camera;
+    BitmapFont                  font;
+    FitViewport                 viewport;
+    
+    KeyboardController          input;
     
     @Override
     public void create() {
@@ -41,7 +46,7 @@ public class MainGame extends ApplicationAdapter {
             font.setColor(Color.WHITE);
         }
         
-        grid = new CheeseGrid(21, 13, 12);
+        grid = CheeseGrid.getNewDefault();
         input = new KeyboardController().setMode(ControlMode.CHOOSE_OPPONENT).setGrid(grid);
         
         try {
@@ -50,9 +55,9 @@ public class MainGame extends ApplicationAdapter {
             grid.ctrl().executeAll();
             grid.makeGraphical();
             grid.state().menu().chooseOpponent();
+            grid.ctrl().valueBoard();
         } catch (CheeseException e) {
-            e.printStackTrace();
-            // TODO: log error
+            log.log(Level.SEVERE, "Grid setup failure", e);
         }
         
     }
@@ -77,8 +82,7 @@ public class MainGame extends ApplicationAdapter {
         try {
             input.processInput();
         } catch (CheeseException e) {
-            e.printStackTrace();
-            // TODO: log error
+            log.log(Level.SEVERE, "Input processing failure.", e);
         }
     }
     

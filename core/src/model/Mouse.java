@@ -1,6 +1,5 @@
 package model;
 
-import model.Block.Type;
 import orders.MouseMove;
 
 public class Mouse extends Block {

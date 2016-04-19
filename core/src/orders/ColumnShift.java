@@ -1,10 +1,7 @@
 package orders;
 
-import java.util.List;
-
 import control.Direction;
 import graphical.SceneGraph;
-import model.Block;
 import model.CheeseException;
 import model.CheeseGrid;
 

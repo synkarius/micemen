@@ -11,6 +11,8 @@ import orders.SetHand;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
+import file.Board;
+
 public class KeyboardController implements IController {
     
     public enum ControlMode {
@@ -151,14 +153,14 @@ public class KeyboardController implements IController {
                 grid.state().menu().menu();
             } else if (saidYes) {
                 if (mode == ControlMode.CONFIRM_NEW_GAME) {
-                    // TODO: Board.newGame()
+                    Board.newGame(null);
                     return;
                 } else if (mode == ControlMode.CONFIRM_SAVE) {
-                    // TODO: board.saveGame(grid, blue);
+                    Board.saveGame(grid, blue, null);
                 } else if (mode == ControlMode.CONFIRM_LOAD) {
-                    CheeseGrid load = null;// TODO = Board.loadFromSave();
+                    CheeseGrid load = Board.loadFromSave();
                     if (load != null) {
-                        // TODO: board.newGame(load);
+                        Board.newGame(grid);
                     }
                 } else if (mode == ControlMode.CONFIRM_QUIT) {
                     System.exit(0);
@@ -173,7 +175,7 @@ public class KeyboardController implements IController {
             boolean saidNo = Gdx.input.isKeyJustPressed(Input.Keys.N);
             
             if (saidYes) {
-                // TODO: board.newgame
+                Board.newGame(null);
             } else if (saidNo) {
                 System.exit(0);
             }

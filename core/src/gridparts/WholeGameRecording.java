@@ -27,10 +27,6 @@ public class WholeGameRecording {
         public Direction  chosenShiftDir;
         public int        chosenShiftX;
         public List<Move> moves = new ArrayList<>();
-        
-        public boolean isEmpty() {
-            return moves.size() == 0 && board == null;
-        }
     }
     
     private List<Turn> turns       = new ArrayList<>();
