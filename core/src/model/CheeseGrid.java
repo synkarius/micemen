@@ -139,10 +139,11 @@ public class CheeseGrid {
     }
     
     public void eliminate(Mouse mouse) {
-        SimPoint p = get(mouse);
-        Block empty = new EmptyBlock(this);
+        int x = mouse.team == Team.RED ? wMax() : 0;
+        int y = hMax();
         
-        grid[p.x()][p.y()] = empty;
+        Block empty = new EmptyBlock(this);
+        grid[x][y] = empty;
     }
     
     public SimPoint get(Block block) {
@@ -163,7 +164,7 @@ public class CheeseGrid {
         } else {
             for (int y2 = height() - 2; y2 >= 0; y2--)
                 grid[x][y2] = copy[y2 + 1];
-            grid[x][grid.length - 1] = copy[0];
+            grid[x][grid[x].length - 1] = copy[0];
             
         }
     }

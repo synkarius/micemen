@@ -22,6 +22,7 @@ import model.Block.Type;
 import model.Mouse.Team;
 import orders.IOrder;
 import orders.MouseMove;
+import orders.MuscleFlexDrop;
 import util.NonNullList;
 
 public class GridController {
@@ -280,6 +281,24 @@ public class GridController {
             return !result;
     }
     
+    public IOrder removeEscapedMice() {
+        Mouse mouse;
+        int x = -1;
+        Block left = grid.get(0, grid.hMax());
+        Block right = grid.get(grid.wMax(), grid.hMax());
+        if (left.isMouse()) {
+            mouse = (Mouse) left;
+            x = 0;
+        } else if (right.isMouse()) {
+            mouse = (Mouse) right;
+            x = grid.wMax();
+        } else {
+            return null;
+        }
+        
+        return new MuscleFlexDrop(mouse, x);
+    }
+    
     public void executeAll() throws CheeseException {
         while (orders.size() > 0)
             executeNext();
@@ -288,8 +307,13 @@ public class GridController {
     public void executeNext() throws CheeseException {
         IOrder order = orders.get(0);
         order.execute(grid);
-        if (order.finished())
+        if (order.finished()) {
             orders.remove(order);
+            
+            IOrder muscle = removeEscapedMice();
+            if (muscle != null)
+                orders.add(0, muscle);
+        }
     }
     
 }

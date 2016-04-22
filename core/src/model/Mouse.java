@@ -52,12 +52,12 @@ public class Mouse extends Block {
              * if mouse escaped, remove it before the next mouse can get stuck
              * when calculating its moves
              */
-            if (y == grid.hMax() && (x == 0 || x == grid.wMax())) {
-                grid.eliminate(this);
-            } else {
+//            if (y == grid.hMax() && (x == 0 || x == grid.wMax())) {
+//                grid.eliminate(this);
+//            } else {
                 Block empty = grid.get(x, y);
                 grid.switcH(this, empty);
-            }
+//            }
         }
         
         return result;
@@ -76,7 +76,7 @@ public class Mouse extends Block {
     private static boolean canMove(CheeseGrid grid, int x, int y, Team team) {
         int dir = walkingDir(team);
         int newX = x + dir;
-        if (newX < 0 || newX >= grid.wMax())
+        if (newX < 0 || newX > grid.wMax())
             return false;
         return grid.get(newX, y).isEmpty();
     }
