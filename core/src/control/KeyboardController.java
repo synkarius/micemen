@@ -156,7 +156,7 @@ public class KeyboardController implements IController {
                     Board.newGame(null);
                     return;
                 } else if (mode == ControlMode.CONFIRM_SAVE) {
-                    Board.saveGame(grid, blue, null);
+                    Board.saveGame(grid, blue);
                 } else if (mode == ControlMode.CONFIRM_LOAD) {
                     CheeseGrid load = Board.loadFromSave();
                     if (load != null) {

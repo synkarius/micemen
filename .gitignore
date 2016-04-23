@@ -4,5 +4,8 @@
 *.class
 
 
+*.oldsave
+*.log
+mice.txt
 #
 /core/

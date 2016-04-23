@@ -23,7 +23,14 @@ import model.Mouse.Team;
 
 public class Board {
     private static final Logger log       = Logger.getLogger(Board.class.getName());
-    private static final String SAVE_NAME = "mice.txt";
+    
+    private static Path savePath() {
+        return Paths.get("mice.txt").toAbsolutePath();
+    }
+    
+    private static Path oldSavePath() {
+        return Paths.get(new Date().toString().replace(':', ' ') + ".oldsave").toAbsolutePath();
+    }
     
     public static void newGame(CheeseGrid grid) {
         // TODO: clear / reset everything
@@ -64,19 +71,19 @@ public class Board {
         return board.toString();
     }
     
-    public static void saveGame(CheeseGrid grid, IController blue, String path) {
+    public static void saveGame(CheeseGrid grid, IController blue) {
         String board = getBoardString(grid);
         String opponentWasCPU = (blue == null || !(blue instanceof KeyboardController)) ? "1" : "0";
         String team = grid.activeTeam() == Team.RED ? "0" : "1";
         
-        Path save = Paths.get(path);
+        if (Files.exists(savePath()))
+            try {
+                Files.move(savePath(), oldSavePath());
+            } catch (IOException e1) {
+                log.log(Level.SEVERE, "Save failure (1)", e1);
+            }
         
-        try (BufferedWriter writer = Files.newBufferedWriter(save)) {
-            if (path == null)
-                path = SAVE_NAME;
-            
-            if (Files.exists(save))
-                Files.move(save, Paths.get(new Date().toString() + ".oldsave"));
+        try (BufferedWriter writer = Files.newBufferedWriter(savePath())) {
             
             writer.write("0");// reserved for CPU level
             writer.write(opponentWasCPU);
@@ -84,19 +91,18 @@ public class Board {
             writer.newLine();
             writer.write(board);
         } catch (IOException e) {
-            log.log(Level.SEVERE, "Save failure", e);
+            log.log(Level.SEVERE, "Save failure (2)", e);
         }
     }
     
     public static CheeseGrid loadFromSave() {
         CheeseGrid result = CheeseGrid.getNewDefault();
-        Path save = Paths.get(SAVE_NAME);
         
         Team team = null;
         boolean opponentWasCPU = false;
         int level;
         
-        try (BufferedReader reader = Files.newBufferedReader(save)) {
+        try (BufferedReader reader = Files.newBufferedReader(savePath())) {
             
             int x = 0;
             int y = 0;
@@ -111,6 +117,7 @@ public class Board {
                         opponentWasCPU = true;
                     if (line.charAt(2) == '1')
                         team = Team.BLUE;
+                    continue;
                 }
                 
                 String[] cells = line.split("");
