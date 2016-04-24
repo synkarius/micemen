@@ -32,10 +32,6 @@ public class Board {
         return Paths.get(new Date().toString().replace(':', ' ') + ".oldsave").toAbsolutePath();
     }
     
-    public static void newGame(CheeseGrid grid) {
-        // TODO: clear / reset everything
-    }
-    
     public static String getBoardString(CheeseGrid grid) {
         return getBoardString(grid, false);
     }

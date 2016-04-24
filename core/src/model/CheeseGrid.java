@@ -257,4 +257,8 @@ public class CheeseGrid {
     public void opponentWasCPU(boolean b) {
         this.opponentWasCPU = b;
     }
+    
+    public boolean opponentWasCPU() {
+        return opponentWasCPU;
+    }
 }

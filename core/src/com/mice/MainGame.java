@@ -19,18 +19,51 @@ import graphical.GridGfx;
 import graphical.SceneGraph;
 import model.CheeseException;
 import model.CheeseGrid;
+import util.Restart;
 
 public class MainGame extends ApplicationAdapter {
     private static final Logger log = Logger.getLogger(MainGame.class.getName());
     
     ShapeRenderer               shaper;
     SpriteBatch                 batch;
-    CheeseGrid                  grid;
     OrthographicCamera          camera;
     BitmapFont                  font;
     FitViewport                 viewport;
     
+    CheeseGrid                  grid;
     KeyboardController          input;
+    
+    public void restart(CheeseGrid grid) {
+        ControlMode mode;
+        boolean loaded = grid != null;
+        if (loaded) {
+            mode = ControlMode.GAME;
+            this.grid = grid;
+        } else { // new game from scratch
+            mode = ControlMode.CHOOSE_OPPONENT;
+            this.grid = CheeseGrid.getNewDefault();
+        }
+        
+        this.input = new KeyboardController().setMode(mode).setGrid(this.grid).setRestart(this::restart);
+        
+        try {
+            if (!loaded)
+                this.grid.ctrl().fillGrid();
+            this.grid.ctrl().recalculateMoves();
+            this.grid.ctrl().executeAll();
+            this.grid.makeGraphical();
+            if (!loaded) {
+                this.grid.state().menu().chooseOpponent();
+            } else {
+                this.grid.state().menu().menu();
+                this.input.loadOpponent();
+                this.input.startGame(this.grid.activeTeam());
+            }
+            this.grid.ctrl().valueBoard();
+        } catch (CheeseException e) {
+            log.log(Level.SEVERE, "Grid setup failure", e);
+        }
+    }
     
     @Override
     public void create() {
@@ -46,20 +79,8 @@ public class MainGame extends ApplicationAdapter {
             font.setColor(Color.WHITE);
         }
         
-        grid = CheeseGrid.getNewDefault();
-        input = new KeyboardController().setMode(ControlMode.CHOOSE_OPPONENT).setGrid(grid);
-        
-        try {
-            grid.ctrl().fillGrid();
-            grid.ctrl().recalculateMoves();
-            grid.ctrl().executeAll();
-            grid.makeGraphical();
-            grid.state().menu().chooseOpponent();
-            grid.ctrl().valueBoard();
-        } catch (CheeseException e) {
-            log.log(Level.SEVERE, "Grid setup failure", e);
-        }
-        
+        Restart restart = this::restart;
+        restart.action(null);
     }
     
     @Override

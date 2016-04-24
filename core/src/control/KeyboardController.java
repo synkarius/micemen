@@ -1,5 +1,9 @@
 package control;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+
+import file.Board;
 import model.CheeseException;
 import model.CheeseGrid;
 import model.Mouse.Team;
@@ -7,11 +11,7 @@ import orders.ColumnShift;
 import orders.IOrder;
 import orders.PassTurn;
 import orders.SetHand;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-
-import file.Board;
+import util.Restart;
 
 public class KeyboardController implements IController {
     
@@ -27,9 +27,10 @@ public class KeyboardController implements IController {
     private IController blue;
     private CheeseGrid  grid;
     private ControlMode mode;
+    private Restart restart;
     
-    public KeyboardController setState() {
-        
+    public KeyboardController setRestart(Restart restart) {
+        this.restart = restart;
         return this;
     }
     
@@ -61,7 +62,7 @@ public class KeyboardController implements IController {
     }
     
     public boolean isReady() {
-        return mode != null && grid != null; // TODO?: && state != null
+        return mode != null && grid != null;
     }
     
     private boolean isNewGameChoices() {
@@ -92,6 +93,11 @@ public class KeyboardController implements IController {
     private boolean isMenuConfirm() {
         return mode == ControlMode.CONFIRM_NEW_GAME || mode == ControlMode.CONFIRM_SAVE
                 || mode == ControlMode.CONFIRM_LOAD || mode == ControlMode.CONFIRM_QUIT;
+    }
+    
+    public void loadOpponent() {
+        IController blue = grid.opponentWasCPU() ? new ComputerPlayerBasic().grid(grid).team(Team.BLUE) : this;
+        setControllers(this, blue);
     }
     
     public void processInput() throws CheeseException {
@@ -153,14 +159,14 @@ public class KeyboardController implements IController {
                 grid.state().menu().menu();
             } else if (saidYes) {
                 if (mode == ControlMode.CONFIRM_NEW_GAME) {
-                    Board.newGame(null);
+                    this.restart.action(null);
                     return;
                 } else if (mode == ControlMode.CONFIRM_SAVE) {
                     Board.saveGame(grid, blue);
                 } else if (mode == ControlMode.CONFIRM_LOAD) {
                     CheeseGrid load = Board.loadFromSave();
                     if (load != null) {
-                        Board.newGame(grid);
+                        this.restart.action(load);
                     }
                 } else if (mode == ControlMode.CONFIRM_QUIT) {
                     System.exit(0);
@@ -175,7 +181,7 @@ public class KeyboardController implements IController {
             boolean saidNo = Gdx.input.isKeyJustPressed(Input.Keys.N);
             
             if (saidYes) {
-                Board.newGame(null);
+                this.restart.action(null);
             } else if (saidNo) {
                 System.exit(0);
             }
