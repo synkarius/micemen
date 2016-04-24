@@ -243,20 +243,21 @@ public class GridController {
             int totalY = Math.abs(total.y());
             
             if (fallsOnly) {
-                if (totalX == 0 && totalY > 0) {
-                    
-                    IOrder muscle = copygrid.ctrl().removeEscapedMice();
+                if (totalX == 0 && totalY > 0)
+                    return move;
+            } else {
+                if (totalX + totalY > 0) {
+                    MuscleFlexDrop muscle = copygrid.ctrl().removeEscapedMice();
                     if (muscle != null) {
-                        // orders.add(0, muscle);
                         Combo combo = new Combo().add(move).add(muscle);
+                        
+                        /** must also immediately update copygrid */
+                        muscle.executeOnCopygrid(copygrid);
+                        
                         return combo;
                     }
-                    
                     return move;
                 }
-            } else {
-                if (totalX + totalY > 0)
-                    return move;
             }
         }
         return null;
@@ -290,7 +291,7 @@ public class GridController {
             return !result;
     }
     
-    public IOrder removeEscapedMice() {
+    public MuscleFlexDrop removeEscapedMice() {
         Mouse mouse;
         int x = -1;
         Block left = grid.get(0, grid.hMax());
