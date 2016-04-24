@@ -178,7 +178,7 @@ public class GridController {
     }
     
     public boolean poleIsAvailable(int x) {
-        boolean poleIsBlocked = grid.X() != null && x == grid.activePole();
+        boolean poleIsBlocked = grid.X() != null && x == grid.X();
         return !poleIsBlocked && grid.poles()[x];
     }
     

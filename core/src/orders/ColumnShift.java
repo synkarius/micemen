@@ -43,7 +43,7 @@ public class ColumnShift implements IOrder {
             grid.shift(dir, x);
             grid.activePole(x);
             grid.ctrl().recalculateMoves();
-            grid.ctrl().orders().add(0, new PassTurn());
+            grid.ctrl().orders().add(new PassTurn());
             
             grid.state().columnShifting = null;
             grid.state().yOffset = 0;
