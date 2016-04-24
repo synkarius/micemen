@@ -11,6 +11,9 @@ public class Combo implements IOrder {
     
     private List<IOrder> orders = new ArrayList<>();
     
+    /**
+     * FIFO
+     */
     @Override
     public void execute(CheeseGrid grid) throws CheeseException {
         while (orders.size() > 0) {

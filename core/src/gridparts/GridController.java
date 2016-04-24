@@ -12,14 +12,15 @@ import control.BlockIter;
 import control.ComputerPlayerBasic;
 import control.Direction;
 import model.Block;
+import model.Block.Type;
 import model.CheeseBlock;
 import model.CheeseException;
 import model.CheeseGrid;
 import model.EmptyBlock;
 import model.Mouse;
-import model.SimPoint;
-import model.Block.Type;
 import model.Mouse.Team;
+import model.SimPoint;
+import orders.Combo;
 import orders.IOrder;
 import orders.MouseMove;
 import orders.MuscleFlexDrop;
@@ -184,16 +185,16 @@ public class GridController {
     
     public void recalculateMoves() throws CheeseException {
         CheeseGrid copygrid = new CheeseGrid(grid);
-        Team newActiveTeam = grid.activeTeam() == Team.RED ? Team.BLUE : Team.RED;
+        Team lastTeam = grid.activeTeam() == Team.RED ? Team.RED : Team.BLUE;
         
-        List<IOrder> newOrders = recalc(copygrid, newActiveTeam);
+        List<IOrder> newOrders = recalc(copygrid, lastTeam);
         
         orders.addAll(newOrders);
     }
     
-    private static List<IOrder> recalc(CheeseGrid copygrid, Team newActiveTeam) throws CheeseException {
+    private static List<IOrder> recalc(CheeseGrid copygrid, Team lastTeam) throws CheeseException {
         final List<IOrder> results = new NonNullList<>();
-        final boolean red = newActiveTeam == Team.RED;
+        final boolean red = lastTeam == Team.BLUE;
         final Direction activeDir = red ? Direction.LEFT : Direction.RIGHT, //
                 inactiveDir = !red ? Direction.LEFT : Direction.RIGHT;
         final int activeStart = red ? copygrid.wMax() : 0, //
@@ -204,13 +205,13 @@ public class GridController {
             /** first, look for falls */
             List<Mouse> allMice = copygrid.ctrl().getAllMiceWithDirection(Direction.UP, activeDir, activeStart,
                     copygrid.hMax());
-            MouseMove move = findFirstMove(copygrid, allMice, true);
+            IOrder move = findFirstMove(copygrid, allMice, true);
             if (results.add(move))
                 continue;
             
             /** the active team then moves */
             List<Mouse> activeTeam = allMice.stream()
-                    .filter(mouse -> active(mouse, true, newActiveTeam))
+                    .filter(mouse -> active(mouse, true, lastTeam))
                     .collect(Collectors.toList());
             move = findFirstMove(copygrid, activeTeam, false);
             if (results.add(move))
@@ -220,7 +221,7 @@ public class GridController {
             List<Mouse> nonactiveTeam = copygrid.ctrl()
                     .getAllMiceWithDirection(Direction.UP, inactiveDir, inActiveStart, copygrid.hMax())
                     .stream()
-                    .filter(mouse -> active(mouse, false, newActiveTeam))
+                    .filter(mouse -> active(mouse, false, lastTeam))
                     .collect(Collectors.toList());
             move = findFirstMove(copygrid, nonactiveTeam, false);
             if (results.add(move))
@@ -233,7 +234,7 @@ public class GridController {
         return results;
     }
     
-    private static MouseMove findFirstMove(CheeseGrid copygrid, List<Mouse> mice, boolean fallsOnly)
+    private static IOrder findFirstMove(CheeseGrid copygrid, List<Mouse> mice, boolean fallsOnly)
             throws CheeseException {
         for (Mouse mouse : mice) {
             MouseMove move = mouse.getMoves(copygrid, fallsOnly);
@@ -243,6 +244,14 @@ public class GridController {
             
             if (fallsOnly) {
                 if (totalX == 0 && totalY > 0) {
+                    
+                    IOrder muscle = copygrid.ctrl().removeEscapedMice();
+                    if (muscle != null) {
+                        // orders.add(0, muscle);
+                        Combo combo = new Combo().add(move).add(muscle);
+                        return combo;
+                    }
+                    
                     return move;
                 }
             } else {
@@ -307,13 +316,8 @@ public class GridController {
     public void executeNext() throws CheeseException {
         IOrder order = orders.get(0);
         order.execute(grid);
-        if (order.finished()) {
+        if (order.finished())
             orders.remove(order);
-            
-            IOrder muscle = removeEscapedMice();
-            if (muscle != null)
-                orders.add(0, muscle);
-        }
     }
     
 }

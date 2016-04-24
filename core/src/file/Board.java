@@ -94,7 +94,7 @@ public class Board {
     public static CheeseGrid loadFromSave() {
         CheeseGrid result = CheeseGrid.getNewDefault();
         
-        Team team = null;
+        Team team = Team.RED;
         boolean opponentWasCPU = false;
         int level;
         
