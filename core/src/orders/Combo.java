@@ -18,13 +18,13 @@ public class Combo implements IOrder {
     public void execute(CheeseGrid grid) throws CheeseException {
         while (orders.size() > 0) {
             IOrder order = orders.get(0);
-            grid.ctrl().orders().add(order);
+            grid.ctrl().orders().add(0, order);
             orders.remove(order);
         }
     }
     
     public Combo add(IOrder order) {
-        orders.add(order);
+        orders.add(0, order);
         return this;
     }
     
