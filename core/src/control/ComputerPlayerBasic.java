@@ -2,6 +2,7 @@ package control;
 
 import java.util.List;
 
+import gridparts.GridController.Scores;
 import model.Block;
 import model.CheeseException;
 import model.CheeseGrid;
@@ -58,14 +59,13 @@ public class ComputerPlayerBasic extends ComputerPlayer implements IController {
             }
         }
         
-        int redEscapees = grid.ctrl().score(Team.RED);
-        int blueEscapees = grid.ctrl().score(Team.BLUE);
+        Scores scores = grid.ctrl().scores();
         if (team == Team.RED) {
-            score += redEscapees * MOUSE_PRESENCE;
-            score -= blueEscapees * MOUSE_PRESENCE;
+            score += scores.red * MOUSE_PRESENCE;
+            score -= scores.blue * MOUSE_PRESENCE;
         } else if (team == Team.BLUE) {
-            score += blueEscapees * MOUSE_PRESENCE;
-            score -= redEscapees * MOUSE_PRESENCE;
+            score += scores.blue * MOUSE_PRESENCE;
+            score -= scores.red * MOUSE_PRESENCE;
         }
         
         return score;

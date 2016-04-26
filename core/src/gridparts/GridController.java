@@ -46,6 +46,11 @@ public class GridController {
     private static final List<Integer> VERBOTEN    = Arrays.asList(0, 1, 8, 9, 10, 11, 12, 19, 20);
     private static final int           CHEESE_WALL = 7;
     
+    public static class Scores {
+        public int red;
+        public int blue;
+    }
+    
     public GridController(CheeseGrid grid) {
         this.grid = grid;
         this.orders = new ArrayList<>();
@@ -176,6 +181,27 @@ public class GridController {
             }
         }
         return grid.micePerTeam() - miceLeft;
+    }
+    
+    public Scores scores() {
+        Scores result = new Scores();
+        int redsLeft = 0;
+        int bluesLeft = 0;
+        
+        for (int x = 0; x < grid.width(); x++) {
+            for (int y = 0; y < grid.height(); y++) {
+                Block block = grid.get(x, y);
+                if (block.isRedMouse())
+                    redsLeft++;
+                else if (block.isBlueMouse())
+                    bluesLeft++;
+            }
+        }
+        
+        result.red = grid.micePerTeam() - redsLeft;
+        result.blue = grid.micePerTeam() - bluesLeft;
+        
+        return result;
     }
     
     public boolean poleIsAvailable(int x) {
