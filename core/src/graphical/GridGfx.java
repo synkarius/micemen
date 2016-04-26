@@ -41,8 +41,10 @@ public class GridGfx {
         private TextureRegion blue;
         
         private Graphic(int x, int y) {
-            this.red = new TextureRegion(redsTex, x, y, SceneGraph.BLOCK_SIZE, SceneGraph.BLOCK_SIZE);
-            this.blue = new TextureRegion(bluesTex, x, y, SceneGraph.BLOCK_SIZE, SceneGraph.BLOCK_SIZE);
+            this.red = new TextureRegion(redsTex, x * SceneGraph.BLOCK_SIZE, y * SceneGraph.BLOCK_SIZE,
+                    SceneGraph.BLOCK_SIZE, SceneGraph.BLOCK_SIZE);
+            this.blue = new TextureRegion(bluesTex, x * SceneGraph.BLOCK_SIZE, y * SceneGraph.BLOCK_SIZE,
+                    SceneGraph.BLOCK_SIZE, SceneGraph.BLOCK_SIZE);
         }
         
         public TextureRegion red() {

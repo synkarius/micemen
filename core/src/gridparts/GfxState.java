@@ -3,6 +3,7 @@ package gridparts;
 import java.util.HashMap;
 import java.util.Map;
 
+import graphical.GridGfx.Graphic;
 import model.Block;
 import model.CheeseGrid;
 import model.Mouse;
@@ -29,7 +30,7 @@ public class GfxState {
         for (int x = 0; x < grid.width(); x++)
             for (int y = 0; y < grid.height(); y++)
                 if (grid.get(x, y).isMouse())
-                    animFrame.put(grid.get(x, y), null);
+                    animFrame.put(grid.get(x, y), 0);
         return this;
     }
     
@@ -37,6 +38,11 @@ public class GfxState {
         if (animFrame.containsKey(mouse)) {
             animFrame.put(mouse, frame);
         }
+    }
+    
+    public void reset(Mouse mouse) {
+        mouse.graphic(Graphic.STAND);
+        putFrame(mouse, 0);
     }
     
     public Integer getFrame(Mouse mouse) {

@@ -31,7 +31,7 @@ public class Mouse extends Block {
         int x = origin.x();
         int y = origin.y();
         
-        MouseMove result = new MouseMove(this, origin);
+        MouseMove result = new MouseMove(this);
         while (true) {
             
             if (mustFall(grid, x, y)) {
