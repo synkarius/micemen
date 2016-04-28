@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import graphical.GridGfx.Graphic;
 import model.CheeseGrid;
 import model.EmptyBlock;
 import model.Mouse;
@@ -12,13 +11,14 @@ import model.SimPoint;
 
 public class MouseMove implements IOrder {
     
-    private static final int     DELAY = 15;
+    private static final int     DELAY = 25;
     
     private final Mouse          simMouse;
     private Mouse                applicableMouse;
     private final List<SimPoint> moves;
     private Iterator<SimPoint>   iter;
     private int                  counter;
+    boolean                      finished;
     
     public MouseMove(Mouse simMouse) {
         this.simMouse = simMouse;
@@ -35,18 +35,14 @@ public class MouseMove implements IOrder {
         
         if (applicableMouse == null || applicableMouse.gridID() != grid.id()) {
             applicableMouse = simMouse.getOriginal(grid.id());
-            grid.state().reset(applicableMouse);
-            applicableMouse.graphic(Graphic.WALK);
+            grid.state().anim().reset(applicableMouse);
         }
         
         if (grid.isGraphical()) {
-            // walking animation
-            Integer frame = grid.state().getFrame(applicableMouse);
-            Integer next = frame == 0 ? 1 : 0;
-            grid.state().putFrame(applicableMouse, next);
             if (counter++ > DELAY) {
                 counter = 0;
-            } else {// and delay:
+                grid.state().anim().walk(applicableMouse);
+            } else {// delay:
                 return;
             }
         }
@@ -62,10 +58,15 @@ public class MouseMove implements IOrder {
             
             grid.switcH(applicableMouse, empty);
         }
+        
+        finished = !iter.hasNext();
+        
+        if (grid.isGraphical() && finished)
+            grid.state().anim().reset(applicableMouse);
     }
     
     public boolean finished() {
-        return !iter.hasNext();
+        return finished;
     }
     
     public SimPoint consolidate() {

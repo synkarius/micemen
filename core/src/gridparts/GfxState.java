@@ -17,36 +17,59 @@ public class GfxState {
     public Integer              columnShifting;
     public int                  yOffset;
     
-    private Map<Block, Integer> animFrame = new HashMap<>();
+    
     
     private Menu                menu;
+    private Anim                anim;
     
     public GfxState(CheeseGrid grid) {
         this.grid = grid;
         this.menu = new Menu();
+        this.anim = new Anim();
     }
     
     public GfxState init() {
         for (int x = 0; x < grid.width(); x++)
             for (int y = 0; y < grid.height(); y++)
                 if (grid.get(x, y).isMouse())
-                    animFrame.put(grid.get(x, y), 0);
+                    anim.animFrame.put(grid.get(x, y), 0);
         return this;
     }
     
-    public void putFrame(Mouse mouse, Integer frame) {
-        if (animFrame.containsKey(mouse)) {
-            animFrame.put(mouse, frame);
+    
+    
+    public Anim anim() {
+        return anim;
+    }
+    
+    public static class Anim {
+        private Map<Block, Integer> animFrame = new HashMap<>();
+        public void putFrame(Mouse mouse, Integer frame) {
+            if (animFrame.containsKey(mouse)) {
+                animFrame.put(mouse, frame);
+            }
         }
-    }
-    
-    public void reset(Mouse mouse) {
-        mouse.graphic(Graphic.STAND);
-        putFrame(mouse, 0);
-    }
-    
-    public Integer getFrame(Mouse mouse) {
-        return animFrame.get(mouse);
+        
+        public void reset(Mouse mouse) {
+            mouse.graphic(Graphic.STAND);
+            putFrame(mouse, 0);
+        }
+        
+        public Integer getFrame(Mouse mouse) {
+            return animFrame.get(mouse);
+        }
+        
+        /** alternates between walking and standing graphics */
+        public void walk(Mouse mouse) {
+            Integer frame = getFrame(mouse);
+            Integer next = frame == 0 ? 1 : 0;
+            putFrame(mouse, next);
+            
+            if (next == 1)
+                mouse.graphic(Graphic.WALK);
+            else
+                mouse.graphic(Graphic.STAND);
+        }
     }
     
     public Menu menu() {
@@ -56,7 +79,7 @@ public class GfxState {
     public static class Menu {
         public int    redScore;
         public int    blueScore;
-        public String text = "T";
+        public String text    = "T";
         public String message = "M";
         
         public void boardFavor(Team team, int difference) {
