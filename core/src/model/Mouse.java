@@ -48,16 +48,8 @@ public class Mouse extends Block {
             if (!grid.contains(x, y))
                 throw new CheeseException("Bad move detected.");
             
-            /**
-             * if mouse escaped, remove it before the next mouse can get stuck
-             * when calculating its moves
-             */
-//            if (y == grid.hMax() && (x == 0 || x == grid.wMax())) {
-//                grid.eliminate(this);
-//            } else {
-                Block empty = grid.get(x, y);
-                grid.switcH(this, empty);
-//            }
+            Block empty = grid.get(x, y);
+            grid.switcH(this, empty);
         }
         
         return result;

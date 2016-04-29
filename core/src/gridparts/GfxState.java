@@ -3,7 +3,8 @@ package gridparts;
 import java.util.HashMap;
 import java.util.Map;
 
-import graphical.GridGfx.Graphic;
+import graphical.Resource;
+import graphical.Resource.Graphic;
 import model.Block;
 import model.CheeseGrid;
 import model.Mouse;
@@ -12,15 +13,13 @@ import model.Mouse.Team;
 /** for tracking changes to graphical state which are not a part of the model */
 public class GfxState {
     
-    private CheeseGrid          grid;
+    private CheeseGrid grid;
     
-    public Integer              columnShifting;
-    public int                  yOffset;
+    public Integer     columnShifting;
+    public int         yOffset;
     
-    
-    
-    private Menu                menu;
-    private Anim                anim;
+    private Menu       menu;
+    private Anim       anim;
     
     public GfxState(CheeseGrid grid) {
         this.grid = grid;
@@ -29,14 +28,12 @@ public class GfxState {
     }
     
     public GfxState init() {
-        for (int x = 0; x < grid.width(); x++)
-            for (int y = 0; y < grid.height(); y++)
-                if (grid.get(x, y).isMouse())
-                    anim.animFrame.put(grid.get(x, y), 0);
+        // for (int x = 0; x < grid.width(); x++)
+        // for (int y = 0; y < grid.height(); y++)
+        // if (grid.get(x, y).isMouse())
+        // anim.animFrame.put(grid.get(x, y), 0);
         return this;
     }
-    
-    
     
     public Anim anim() {
         return anim;
@@ -44,10 +41,11 @@ public class GfxState {
     
     public static class Anim {
         private Map<Block, Integer> animFrame = new HashMap<>();
+        
         public void putFrame(Mouse mouse, Integer frame) {
-            if (animFrame.containsKey(mouse)) {
-                animFrame.put(mouse, frame);
-            }
+            // if (animFrame.containsKey(mouse)) {
+            animFrame.put(mouse, frame);
+            // }
         }
         
         public void reset(Mouse mouse) {
@@ -56,19 +54,38 @@ public class GfxState {
         }
         
         public Integer getFrame(Mouse mouse) {
-            return animFrame.get(mouse);
+            return animFrame.getOrDefault(mouse, 0);
         }
         
         /** alternates between walking and standing graphics */
         public void walk(Mouse mouse) {
-            Integer frame = getFrame(mouse);
-            Integer next = frame == 0 ? 1 : 0;
+            int frame = getFrame(mouse);
+            int next = frame == 0 ? 1 : 0;
             putFrame(mouse, next);
             
             if (next == 1)
                 mouse.graphic(Graphic.WALK);
             else
                 mouse.graphic(Graphic.STAND);
+        }
+        
+        public boolean muscle(Mouse mouse) {
+            boolean finished = false;
+            int frame = getFrame(mouse);
+            int frameScaled = frame / 10;
+            Graphic graphic;
+            
+            
+            if (frameScaled >= Graphic.ANIM_FLEX.size()) {
+                frame = 0;
+                graphic = Graphic.FACE_CAMERA;
+            } else {
+                graphic = Graphic.ANIM_FLEX.get(frameScaled);
+            }
+            
+            mouse.graphic(graphic);
+            putFrame(mouse, ++frame);
+            return finished;
         }
     }
     

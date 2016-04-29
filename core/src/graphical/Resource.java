@@ -6,7 +6,7 @@ import java.util.List;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-public class GridGfx {
+public class Resource {
     private static final Texture redsTex     = new Texture("redmice.png");
     private static final Texture bluesTex    = new Texture("bluemice.png");
     private static final Texture cheeseTex   = new Texture("cheese.png");
@@ -37,8 +37,15 @@ public class GridGfx {
         STAND(0, 0), WALK(1, 0), EAT1(2, 0), EAT2(3, 0), EAT3(0, 1), POINT(1, 1), UMBRELLA(2, 1), FACE_CAMERA(3,
                 1), MUSCLE1(0, 2), MUSCLE2(1, 2), FALL(2, 2);
         
-        private TextureRegion red;
-        private TextureRegion blue;
+        private TextureRegion             red;
+        private TextureRegion             blue;
+        
+        /** len: 8 */
+        public static final List<Graphic> ANIM_EAT  = Arrays.asList(EAT1, EAT2, EAT3, STAND, EAT3, STAND, EAT3, STAND);
+        
+        /** len: 11 */
+        public static final List<Graphic> ANIM_FLEX = Arrays.asList(FACE_CAMERA, FACE_CAMERA, FACE_CAMERA, FACE_CAMERA,
+                MUSCLE1, MUSCLE2, MUSCLE1, MUSCLE2, MUSCLE1, MUSCLE2, FACE_CAMERA);
         
         private Graphic(int x, int y) {
             this.red = new TextureRegion(redsTex, x * SceneGraph.BLOCK_SIZE, y * SceneGraph.BLOCK_SIZE,
@@ -55,14 +62,5 @@ public class GridGfx {
             return blue;
         }
     }
-    
-    /** len: 8 */
-    public static final List<Graphic> ANIM_EAT  = Arrays.asList(Graphic.EAT1, Graphic.EAT2, Graphic.EAT3, Graphic.STAND,
-            Graphic.EAT3, Graphic.STAND, Graphic.EAT3, Graphic.STAND);
-    
-    /** len: 11 */
-    public static final List<Graphic> ANIM_FLEX = Arrays.asList(Graphic.FACE_CAMERA, Graphic.FACE_CAMERA,
-            Graphic.FACE_CAMERA, Graphic.FACE_CAMERA, Graphic.MUSCLE1, Graphic.MUSCLE2, Graphic.MUSCLE1,
-            Graphic.MUSCLE2, Graphic.MUSCLE1, Graphic.MUSCLE2, Graphic.FACE_CAMERA);
     
 }

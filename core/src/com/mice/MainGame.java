@@ -15,7 +15,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import control.KeyboardController;
 import control.KeyboardController.ControlMode;
-import graphical.GridGfx;
+import graphical.Resource;
 import graphical.SceneGraph;
 import model.CheeseException;
 import model.CheeseGrid;
@@ -89,7 +89,7 @@ public class MainGame extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
         batch.begin();
-        batch.draw(GridGfx.bg, SceneGraph.X_OFFSET, SceneGraph.Y_OFFSET);
+        batch.draw(Resource.bg, SceneGraph.X_OFFSET, SceneGraph.Y_OFFSET);
         SceneGraph.drawGrid(grid, batch);
         batch.end();
         

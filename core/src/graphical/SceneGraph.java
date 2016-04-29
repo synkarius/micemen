@@ -46,8 +46,9 @@ public class SceneGraph {
                 
                 if (block.isMouse()) {
                     region = block.isRedMouse() ? block.graphic().red() : block.graphic().blue();
+                    region = region;
                 } else if (block.isCheese()) {
-                    region = GridGfx.cheese;
+                    region = Resource.cheese;
                 } else {
                     /** no need to draw empty blocks */
                     continue;
@@ -73,17 +74,17 @@ public class SceneGraph {
     public static void drawControls(CheeseGrid grid, SpriteBatch batch) {
         for (int p = 0; p < grid.poles().length; p++)
             if (grid.poles()[p])
-                batch.draw(GridGfx.pole, X_OFFSET + POLE_OFFSET_X + p * BLOCK_SIZE, POLE_HEIGHT_Y);
+                batch.draw(Resource.pole, X_OFFSET + POLE_OFFSET_X + p * BLOCK_SIZE, POLE_HEIGHT_Y);
         
         if (grid.redHand() != null)
-            batch.draw(GridGfx.redHand, X_OFFSET + HAND_OFFSET_X + grid.redHand() * BLOCK_SIZE,
+            batch.draw(Resource.redHand, X_OFFSET + HAND_OFFSET_X + grid.redHand() * BLOCK_SIZE,
                     POLE_HEIGHT_Y + HAND_OFFSET_Y);
         else if (grid.blueHand() != null)
-            batch.draw(GridGfx.blueHand, X_OFFSET + HAND_OFFSET_X + grid.blueHand() * BLOCK_SIZE,
+            batch.draw(Resource.blueHand, X_OFFSET + HAND_OFFSET_X + grid.blueHand() * BLOCK_SIZE,
                     POLE_HEIGHT_Y + HAND_OFFSET_Y);
         
         if (grid.X() != null)
-            batch.draw(GridGfx.x, X_OFFSET + THE_X_X_OFFSET + grid.X() * BLOCK_SIZE, POLE_HEIGHT_Y + HAND_OFFSET_Y);
+            batch.draw(Resource.x, X_OFFSET + THE_X_X_OFFSET + grid.X() * BLOCK_SIZE, POLE_HEIGHT_Y + HAND_OFFSET_Y);
     }
     
     public static void drawText(CheeseGrid grid, SpriteBatch batch, BitmapFont font) {

@@ -2,7 +2,7 @@ package orders;
 
 import java.util.function.Consumer;
 
-import graphical.GridGfx.Graphic;
+import graphical.Resource.Graphic;
 import model.Block;
 import model.CheeseGrid;
 import model.Mouse.Team;

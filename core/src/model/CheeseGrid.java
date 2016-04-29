@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import control.Direction;
-import graphical.GridGfx.Graphic;
+import graphical.Resource.Graphic;
 import gridparts.GfxState;
 import gridparts.GridController;
 import gridparts.WholeGameRecording;

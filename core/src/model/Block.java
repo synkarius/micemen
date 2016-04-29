@@ -1,6 +1,6 @@
 package model;
 
-import graphical.GridGfx.Graphic;
+import graphical.Resource.Graphic;
 import model.Mouse.Team;
 
 public abstract class Block {
