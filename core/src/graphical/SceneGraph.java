@@ -7,8 +7,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
+import graphical.Resource.Graphic;
 import model.Block;
 import model.CheeseGrid;
+import model.Mouse;
 
 public class SceneGraph {
     
@@ -45,8 +47,14 @@ public class SceneGraph {
                 int _y = flipY(grid, y);
                 
                 if (block.isMouse()) {
-                    region = block.isRedMouse() ? block.graphic().red() : block.graphic().blue();
-                    region = region;
+                    Graphic graphic = block.graphic();
+                    if (block.graphic() != Graphic.EAT1) {
+                        graphic = block.graphic();
+                    } else {
+                        graphic = grid.state().anim().getFrameForEatingMouse((Mouse) block);
+                    }
+                    region = block.isRedMouse() ? graphic.red() : graphic.blue();
+                    
                 } else if (block.isCheese()) {
                     region = Resource.cheese;
                 } else {

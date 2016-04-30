@@ -1,7 +1,10 @@
 package gridparts;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import graphical.Resource;
 import graphical.Resource.Graphic;
@@ -25,6 +28,20 @@ public class GfxState {
         this.grid = grid;
         this.menu = new Menu();
         this.anim = new Anim();
+    }
+    
+    public void randomMouseEatsCheese() {
+        if (Math.random() > .9955) {
+            List<Mouse> mice = grid.ctrl()
+                    .getAllMice()
+                    .stream()
+                    .filter(mouse -> mouse.graphic() == Graphic.POINT)
+                    .collect(Collectors.toList());
+            if (mice.size() > 0) {
+                Collections.shuffle(mice);
+                mice.get(0).graphic(Graphic.EAT1);
+            }
+        }
     }
     
     public GfxState init() {
@@ -75,7 +92,6 @@ public class GfxState {
             int frameScaled = frame / 10;
             Graphic graphic;
             
-            
             if (frameScaled >= Graphic.ANIM_FLEX.size()) {
                 frame = 0;
                 graphic = Graphic.FACE_CAMERA;
@@ -86,6 +102,24 @@ public class GfxState {
             mouse.graphic(graphic);
             putFrame(mouse, ++frame);
             return finished;
+        }
+        
+        public Graphic getFrameForEatingMouse(Mouse mouse) {
+            // boolean finished = false;
+            int frame = getFrame(mouse);
+            int frameScaled = frame / 10;
+            Graphic graphic;
+            
+            if (frameScaled >= Graphic.ANIM_EAT.size()) {
+                frame = 0;
+                graphic = Graphic.POINT;
+                mouse.graphic(graphic);
+            } else {
+                graphic = Graphic.ANIM_EAT.get(frameScaled);
+            }
+            
+            putFrame(mouse, ++frame);
+            return graphic;
         }
     }
     

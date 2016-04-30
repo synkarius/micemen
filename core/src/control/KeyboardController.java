@@ -28,7 +28,7 @@ public class KeyboardController implements IController {
     private IController blue;
     private CheeseGrid  grid;
     private ControlMode mode;
-    private Restart restart;
+    private Restart     restart;
     
     public KeyboardController setRestart(Restart restart) {
         this.restart = restart;
@@ -207,7 +207,7 @@ public class KeyboardController implements IController {
                     if (move != null) {
                         grid.ctrl().orders().add(move);
                     } else {
-                        // TODO: grid.randomMouseEatsCheese();
+                        grid.state().randomMouseEatsCheese();
                     }
                 }
             }

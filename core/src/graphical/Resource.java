@@ -40,8 +40,8 @@ public class Resource {
         private TextureRegion             red;
         private TextureRegion             blue;
         
-        /** len: 8 */
-        public static final List<Graphic> ANIM_EAT  = Arrays.asList(EAT1, EAT2, EAT3, STAND, EAT3, STAND, EAT3, STAND);
+        /** len: 10 */
+        public static final List<Graphic> ANIM_EAT  = Arrays.asList(EAT1, EAT1, EAT1, EAT2, EAT3, STAND, EAT3, STAND, EAT3, STAND);
         
         /** len: 11 */
         public static final List<Graphic> ANIM_FLEX = Arrays.asList(FACE_CAMERA, FACE_CAMERA, FACE_CAMERA, FACE_CAMERA,

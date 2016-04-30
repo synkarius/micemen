@@ -262,6 +262,8 @@ public class GridController {
     
     private static IOrder findFirstMove(CheeseGrid copygrid, List<Mouse> mice, boolean fallsOnly)
             throws CheeseException {
+        //TODO: mutating the copygrid as part of the move-getting process is kind of sloppy
+        // -- better to create full MouseMoves and MuscleFlexDrops and apply them on the spot
         for (Mouse mouse : mice) {
             MouseMove move = mouse.getMoves(copygrid, fallsOnly);
             SimPoint total = move.consolidate();
