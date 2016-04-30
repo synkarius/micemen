@@ -177,6 +177,14 @@ public class CheeseGrid {
         grid[b.x()][b.y()] = blockA;
     }
     
+    public void switcH(SimPoint a, SimPoint b) {
+        Block blockA = get(a.x(), a.y());
+        Block blockB = get(b.x(), b.y());
+        
+        grid[a.x()][a.y()] = blockB;
+        grid[b.x()][b.y()] = blockA;
+    }
+    
     /** for initial sets only -- no longer for updates */
     public void set(int x, int y, Block block) throws CheeseException {
         if (grid[x][y] != null)

@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import graphical.Resource;
+import graphical.Resource.Graphic;
 import model.CheeseGrid;
 import model.EmptyBlock;
 import model.Mouse;
@@ -42,7 +43,6 @@ public class MouseMove implements IOrder {
         if (grid.isGraphical()) {
             if (counter++ > DELAY) {
                 counter = 0;
-                grid.state().anim().walk(applicableMouse);
             } else {// delay:
                 return;
             }
@@ -55,16 +55,21 @@ public class MouseMove implements IOrder {
              * mouse position
              */
             SimPoint next = iter.next();
-            EmptyBlock empty = (EmptyBlock) grid.get(current.x() + next.x(), current.y() + next.y());
+            int newX = current.x() + next.x();
             
             if (grid.isGraphical()) {
                 if (next.x() != 0)
                     Resource.lo2.play();
                 else if (next.y() != 0)
                     Resource.lo.play();
+                
+                if (newX == 0 || newX == grid.wMax())
+                    applicableMouse.graphic(Graphic.UMBRELLA);
+                else
+                    grid.state().anim().walk(applicableMouse);
             }
             
-            grid.switcH(applicableMouse, empty);
+            grid.switcH(current, current.add(next));
         }
         
         finished = !iter.hasNext();
