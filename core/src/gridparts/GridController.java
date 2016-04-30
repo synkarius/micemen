@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -110,13 +111,10 @@ public class GridController {
             dir = Direction.RIGHT;
         }
         
-        BlockIter iter = new BlockIter(grid, Arrays.asList(Direction.UP, dir), start, grid.hMax()).xLimit(5)
-                .yLimit(0)
-                .type(Type.EMPTY)
-                // .side(team)
-                .listLimit(difference);
+        BlockIter<EmptyBlock> iter = new BlockIter<>(grid, Arrays.asList(Direction.UP, dir), start, grid.hMax(),
+                EmptyBlock.class).xLimit(5).yLimit(0).listLimit(difference);
         
-        List<Block> emptyBlocks = iter.toList();
+        List<EmptyBlock> emptyBlocks = iter.toList();
         Collections.shuffle(emptyBlocks);
         
         for (int i = 0; i < difference; i++) {
@@ -225,30 +223,29 @@ public class GridController {
                 inactiveDir = !red ? Direction.LEFT : Direction.RIGHT;
         final int activeStart = red ? copygrid.wMax() : 0, //
                 inActiveStart = !red ? copygrid.wMax() : 0;
+        final Team otherTeam = lastTeam == Team.RED ? Team.BLUE : Team.RED;
         
         while (true) {
             
             /** first, look for falls */
-            List<Mouse> allMice = copygrid.ctrl().getAllMiceWithDirection(Direction.UP, activeDir, activeStart,
+            Iterator<Mouse> allMice = copygrid.ctrl().getAllMiceWithDirection(Direction.UP, activeDir, activeStart,
                     copygrid.hMax());
             IOrder move = findFirstMove(copygrid, allMice, true);
             if (results.add(move))
                 continue;
             
             /** the active team then moves */
-            List<Mouse> activeTeam = allMice.stream()
-                    .filter(mouse -> active(mouse, true, lastTeam))
-                    .collect(Collectors.toList());
+            Iterator<Mouse> activeTeam = allMice = copygrid.ctrl()
+                    .getAllMiceWithDirection(Direction.UP, activeDir, activeStart, copygrid.hMax())
+                    .team(lastTeam);
             move = findFirstMove(copygrid, activeTeam, false);
             if (results.add(move))
                 continue;
             
             /** non-active team last */
-            List<Mouse> nonactiveTeam = copygrid.ctrl()
+            Iterator<Mouse> nonactiveTeam = copygrid.ctrl()
                     .getAllMiceWithDirection(Direction.UP, inactiveDir, inActiveStart, copygrid.hMax())
-                    .stream()
-                    .filter(mouse -> active(mouse, false, lastTeam))
-                    .collect(Collectors.toList());
+                    .team(otherTeam);
             move = findFirstMove(copygrid, nonactiveTeam, false);
             if (results.add(move))
                 continue;
@@ -260,9 +257,11 @@ public class GridController {
         return results;
     }
     
-    private static IOrder findFirstMove(CheeseGrid copygrid, List<Mouse> mice, boolean fallsOnly)
+    private static IOrder findFirstMove(CheeseGrid copygrid, Iterator<Mouse> mice, boolean fallsOnly)
             throws CheeseException {
-        for (Mouse mouse : mice) {
+        while (mice.hasNext()) {
+            // for (Mouse mouse : mice) {
+            Mouse mouse = mice.next();
             MouseMove move = mouse.getMoves(copygrid, fallsOnly);
             SimPoint total = move.consolidate();
             int totalX = Math.abs(total.x());
@@ -290,16 +289,11 @@ public class GridController {
     }
     
     public List<Mouse> getAllMice() {
-        return getAllMiceWithDirection(Direction.DOWN, Direction.RIGHT, 0, 0);
+        return getAllMiceWithDirection(Direction.DOWN, Direction.RIGHT, 0, 0).toList();
     }
     
-    private List<Mouse> getAllMiceWithDirection(Direction first, Direction second, int startX, int startY) {
-        return new BlockIter(grid, Arrays.asList(first, second), startX, startY).type(Type.MOUSE)
-                .toList()
-                //
-                .stream()
-                .map(block -> (Mouse) block)
-                .collect(Collectors.toList());
+    private BlockIter<Mouse> getAllMiceWithDirection(Direction first, Direction second, int startX, int startY) {
+        return new BlockIter<Mouse>(grid, Arrays.asList(first, second), startX, startY, Mouse.class);
     }
     
     public List<Block> columnCopy(int x) {

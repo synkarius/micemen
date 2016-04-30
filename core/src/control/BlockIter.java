@@ -6,10 +6,11 @@ import java.util.List;
 
 import model.Block;
 import model.CheeseGrid;
+import model.Mouse;
 import model.Block.Type;
 import model.Mouse.Team;
 
-public class BlockIter implements Iterator<Block> {
+public class BlockIter<T extends Block> implements Iterator<T> {
     
     private int             x;
     private int             y;
@@ -25,15 +26,15 @@ public class BlockIter implements Iterator<Block> {
     private CheeseGrid      grid;
     private List<Direction> dirs;
     
-    private Type            blocktype;
+    private Class<T>        blocktype;
     
-    private Team            side;
+    private Team            team;
     private int             halfway;
     
     /** controls how many get returned */
     private int             listLimit;
     
-    public BlockIter(CheeseGrid grid, List<Direction> dirs, int x, int y) {
+    public BlockIter(CheeseGrid grid, List<Direction> dirs, int x, int y, Class<T> clazz) {
         this.grid = grid;
         this.dirs = dirs;
         this.x = x;
@@ -41,47 +42,49 @@ public class BlockIter implements Iterator<Block> {
         this.ox = x;
         this.oy = y;
         this.halfway = grid.width() / 2;
+        this.blocktype = clazz;
     }
     
     /** optional param */
-    public BlockIter xLimit(int lx) {
+    public BlockIter<T> xLimit(int lx) {
         this.lx = lx;
         return this;
     }
     
     /** optional param */
-    public BlockIter yLimit(int ly) {
+    public BlockIter<T> yLimit(int ly) {
         this.ly = ly;
         return this;
     }
     
     /** optional param */
-    public BlockIter type(Type type) {
-        this.blocktype = type;
-        return this;
-    }
+    // public BlockIter<T> type(Type type) {
+    // this.blocktype = type;
+    // return this;
+    // }
     
     /** optional param -- side of the team, not mice of the team */
-    public BlockIter side(Team side) {
-        this.side = side;
+    public BlockIter<T> team(Team team) {
+        this.team = team;
         return this;
     }
     
     /** optional param */
-    public BlockIter listLimit(int listLimit) {
+    public BlockIter<T> listLimit(int listLimit) {
         this.listLimit = listLimit;
         return this;
     }
     
-    private boolean notHitListLimit(List<Block> list) {
+    private boolean notHitListLimit(List<T> list) {
         return listLimit == 0 || list.size() < listLimit;
     }
     
-    public List<Block> toList() {
-        List<Block> result = new ArrayList<>();
+    //TODO: move this logic into next() or currentBlock()
+    public List<T> toList() {
+        List<T> result = new ArrayList<>();
         while (this.hasNext() && notHitListLimit(result) || false) {
-            Block block = this.next();
-            if (blocktype == null || blocktype == block.type())
+            T block = this.next();
+            if (block.getClass() == blocktype)
                 result.add(block);
         }
         return result;
@@ -95,13 +98,14 @@ public class BlockIter implements Iterator<Block> {
     // TODO: cache currentblock??
     
     @Override
-    public Block next() {
-        Block next = currentBlock();
+    public T next() {
+        T next = currentBlock();
         setNextBlock();
         return next;
     }
     
-    private Block currentBlock() {
+    @SuppressWarnings("unchecked")
+    private T currentBlock() {
         /**
          * edge of grid check -- you will never be gathering empty blocks or
          * mice from the very first or last columns
@@ -134,21 +138,21 @@ public class BlockIter implements Iterator<Block> {
             }
         }
         
-        /** side check */
-        boolean forSide = side != null;
+        T result = (T) grid.get(x, y);
+        
+        /** team check */
         boolean wrongSide = false;
-        if (forSide) {
-            if (side == Team.RED && x > halfway)
-                wrongSide = true;
-            else if (side == Team.BLUE && x < halfway)
-                wrongSide = true;
+        if (team != null && blocktype == Mouse.class) {
+            boolean red = team == Team.RED && result.isRedMouse();
+            boolean blue = team == Team.BLUE && result.isBlueMouse();
+            wrongSide = !(red || blue);
         }
         
         if (edgeOfGrid || limits || wrongSide) {
             return null;
         }
         
-        return grid.get(x, y);
+        return result;
     }
     
     private void setNextBlock() {
