@@ -7,4 +7,5 @@
 *.oldsave
 *.log
 mice.txt
-#/desktop/
+/desktop/
+#/core/

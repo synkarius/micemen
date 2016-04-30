@@ -1,5 +1,6 @@
 package orders;
 
+import graphical.Resource;
 import graphical.Resource.Graphic;
 import gridparts.GridController.Scores;
 import model.CheeseException;
@@ -62,7 +63,9 @@ public class MuscleFlexDrop implements IOrder {
             // TODO: make Scenegraph drop the mouse first 13 pixels at once,
             // then 2 per frame for 36 frames
             
-            // TODO: play fall sound
+            if (grid.isGraphical())
+                Resource.jump.play();
+            
             if (counter >= face)
                 vanishFinish(grid);
         }

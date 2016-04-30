@@ -1,6 +1,7 @@
 package orders;
 
 import control.Direction;
+import graphical.Resource;
 import graphical.SceneGraph;
 import model.CheeseException;
 import model.CheeseGrid;
@@ -30,7 +31,8 @@ public class ColumnShift implements IOrder {
         grid.state().columnShifting = x;
         grid.state().yOffset += d;
         
-        // TODO: sound
+        if (grid.isGraphical() && pxCount == 0)
+            Resource.hi.play();
         
         pxCount += PX_INCREMENT;
         

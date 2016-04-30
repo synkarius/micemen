@@ -3,6 +3,8 @@ package graphical;
 import java.util.Arrays;
 import java.util.List;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
@@ -33,6 +35,11 @@ public class Resource {
         bg.setRegion(0, 0, SceneGraph.BLOCK_SIZE * 21, SceneGraph.BLOCK_SIZE * 13);
     }
     
+    public static final Sound hi   = Gdx.audio.newSound(Gdx.files.internal("hi.wav"));
+    public static final Sound lo   = Gdx.audio.newSound(Gdx.files.internal("lo.wav"));
+    public static final Sound lo2  = Gdx.audio.newSound(Gdx.files.internal("lo2.wav"));
+    public static final Sound jump = Gdx.audio.newSound(Gdx.files.internal("jump.wav"));
+    
     public static enum Graphic {
         STAND(0, 0), WALK(1, 0), EAT1(2, 0), EAT2(3, 0), EAT3(0, 1), POINT(1, 1), UMBRELLA(2, 1), FACE_CAMERA(3,
                 1), MUSCLE1(0, 2), MUSCLE2(1, 2), FALL(2, 2);
@@ -41,7 +48,8 @@ public class Resource {
         private TextureRegion             blue;
         
         /** len: 10 */
-        public static final List<Graphic> ANIM_EAT  = Arrays.asList(EAT1, EAT1, EAT1, EAT2, EAT3, STAND, EAT3, STAND, EAT3, STAND);
+        public static final List<Graphic> ANIM_EAT  = Arrays.asList(EAT1, EAT1, EAT1, EAT2, EAT3, STAND, EAT3, STAND,
+                EAT3, STAND);
         
         /** len: 11 */
         public static final List<Graphic> ANIM_FLEX = Arrays.asList(FACE_CAMERA, FACE_CAMERA, FACE_CAMERA, FACE_CAMERA,
