@@ -16,8 +16,8 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import control.KeyboardController;
 import control.KeyboardController.ControlMode;
 import graphical.Resource;
-import graphical.Resource.Graphic;
 import graphical.SceneGraph;
+import graphical.TitleScreen;
 import model.CheeseException;
 import model.CheeseGrid;
 import model.SimPoint;
@@ -90,24 +90,31 @@ public class MainGame extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
-        batch.begin();
-        batch.draw(Resource.bg, SceneGraph.X_OFFSET, SceneGraph.Y_OFFSET);
-        SimPoint escapee = SceneGraph.drawGrid(grid, batch);
-        batch.end();
-        
-        SceneGraph.drawBoxes(shaper);
-        
-        batch.begin();
-        SceneGraph.drawControls(grid, batch);
-        SceneGraph.drawText(grid, batch, font);
-        if (escapee != null)
-            SceneGraph.drawEscapee(batch, escapee);
-        batch.end();
-        
-        try {
-            input.processInput();
-        } catch (CheeseException e) {
-            log.log(Level.SEVERE, "Input processing failure.", e);
+        if (!TitleScreen.isFinished()) {
+            batch.begin();
+            TitleScreen.draw(batch);
+            batch.end();
+        } else {
+            
+            batch.begin();
+            batch.draw(Resource.bg, SceneGraph.X_OFFSET, SceneGraph.Y_OFFSET);
+            SimPoint escapee = SceneGraph.drawGrid(grid, batch);
+            batch.end();
+            
+            SceneGraph.drawBoxes(shaper);
+            
+            batch.begin();
+            SceneGraph.drawControls(grid, batch);
+            SceneGraph.drawText(grid, batch, font);
+            if (escapee != null)
+                SceneGraph.drawEscapee(batch, escapee);
+            batch.end();
+            
+            try {
+                input.processInput();
+            } catch (CheeseException e) {
+                log.log(Level.SEVERE, "Input processing failure.", e);
+            }
         }
     }
     

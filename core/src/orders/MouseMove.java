@@ -12,7 +12,7 @@ import model.SimPoint;
 
 public class MouseMove implements IOrder {
     
-    private static final int     DELAY = 25;
+    private static final int     DELAY = 20;
     
     private final Mouse          simMouse;
     private Mouse                applicableMouse;

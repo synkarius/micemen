@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import graphical.Resource;
 import graphical.Resource.Graphic;
 import model.Block;
 import model.CheeseGrid;
