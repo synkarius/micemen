@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import control.BlockIter;
 import control.ComputerPlayerBasic;
@@ -64,8 +65,13 @@ public class GridController {
         int redCount = 0;
         int blueCount = 0;
         
-        for (int x = 0; x < grid.width(); x++) {
-            for (int y = 0; y < grid.height(); y++) {
+        List<Integer> xs = IntStream.range(0, grid.width()).boxed().collect(Collectors.toList());
+        List<Integer> ys = IntStream.range(0, grid.height()).boxed().collect(Collectors.toList());
+        Collections.shuffle(xs);
+        Collections.shuffle(ys);
+        
+        for (Integer x : xs) {
+            for (Integer y : ys) {
                 Block result = new EmptyBlock(grid);
                 
                 if (PLACEMENT.containsKey(x)) {
@@ -127,7 +133,7 @@ public class GridController {
         }
     }
     
-    public void valueBoard() {
+    public Scores valueBoard(boolean returnScores) {
         int red = ComputerPlayerBasic.measureGridValue(grid, Team.RED);
         int blue = ComputerPlayerBasic.measureGridValue(grid, Team.BLUE);
         
@@ -138,6 +144,14 @@ public class GridController {
         } else {
             grid.state().menu().message = "Fair Game";
         }
+        
+        if (returnScores) {
+            Scores scores = new Scores();
+            scores.red = red;
+            scores.blue = blue;
+            return scores;
+        } else
+            return null;
     }
     
     private int columnCheeseCount(int x) {
@@ -262,8 +276,10 @@ public class GridController {
     
     private static IOrder findFirstMove(CheeseGrid copygrid, List<Mouse> mice, boolean fallsOnly)
             throws CheeseException {
-        //TODO: mutating the copygrid as part of the move-getting process is kind of sloppy
-        // -- better to create full MouseMoves and MuscleFlexDrops and apply them on the spot
+        // TODO: mutating the copygrid as part of the move-getting process is
+        // kind of sloppy
+        // -- better to create full MouseMoves and MuscleFlexDrops and apply
+        // them on the spot
         for (Mouse mouse : mice) {
             MouseMove move = mouse.getMoves(copygrid, fallsOnly);
             SimPoint total = move.consolidate();

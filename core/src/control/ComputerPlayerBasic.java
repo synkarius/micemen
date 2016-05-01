@@ -1,5 +1,6 @@
 package control;
 
+import java.util.Collections;
 import java.util.List;
 
 import gridparts.GridController.Scores;
@@ -21,6 +22,9 @@ public class ComputerPlayerBasic extends ComputerPlayer implements IController {
     public IOrder getOrder() throws CheeseException {
         
         List<ColumnShift> choices = super.getChoices();
+        // if (team == Team.BLUE)
+        Collections.reverse(choices);
+        // Collections.shuffle(choices);
         ValueCalc best = null;
         for (ColumnShift choice : choices) {
             ValueCalc calc = ValueCalc.analyzeShift(choice, new CheeseGrid(grid), team);
@@ -34,7 +38,6 @@ public class ComputerPlayerBasic extends ComputerPlayer implements IController {
         Combo combo = new Combo();
         combo.add(new SetHand(grid, best.x()));
         combo.add(new ColumnShift(best.x(), best.dir()));
-        
         
         grid.activePole(best.x());
         

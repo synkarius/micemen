@@ -4,6 +4,7 @@ import java.util.stream.IntStream;
 
 import control.ComputerPlayerBasic;
 import control.IController;
+import file.Board;
 import gridparts.GridController.Scores;
 import model.CheeseException;
 import model.CheeseGrid;
@@ -17,13 +18,25 @@ public class Simulator {
         long totalStart = java.lang.System.currentTimeMillis();
         int redWins = 0;
         int blueWins = 0;
+        int redStartedAhead = 0;
+        int blueStartedAhead = 0;
+        int redWentFirst = 0;
+        int blueWentFirst = 0;
         
-        for (int i = 0; i < 1000; i++) {
-            CheeseGrid grid = CheeseGrid.getNewDefault();
-            grid.activeTeam(Team.RED);
-            grid.ctrl().fillGrid();
+        allGames: for (int i = 0; i < 1000; i++) {
+            CheeseGrid grid = Board.loadFromSave();
+            // CheeseGrid.getNewDefault();
+            // grid.activeTeam(Team.RED);
+            // grid.ctrl().fillGrid();
             grid.ctrl().recalculateMoves();
             grid.ctrl().executeAll();
+            
+            Scores starting = grid.ctrl().valueBoard(true);
+            if (starting.red > starting.blue) {
+                redStartedAhead++;
+            } else if (starting.blue > starting.red) {
+                blueStartedAhead++;
+            }
             
             IController redController = new ComputerPlayerBasic().grid(grid).team(Team.RED);
             IController blueController = new ComputerPlayerBasic().grid(grid).team(Team.BLUE);
@@ -32,13 +45,13 @@ public class Simulator {
             int moveCount = 0;
             
             grid.ctrl().orders().add(new PassTurn());
-            if (Math.random() > .5)
+            if (Math.random() < .5)
                 grid.ctrl().orders().add(new PassTurn());
             grid.ctrl().executeAll();
             
             long start = java.lang.System.currentTimeMillis();
             
-            while (true) {
+            thisGame: while (true) {
                 IController controller = grid.activeTeam() == Team.RED ? redController : blueController;
                 IOrder order = controller.getOrder();
                 moveCount++;
@@ -49,7 +62,12 @@ public class Simulator {
                 Scores scores = grid.ctrl().scores();
                 redScore = scores.red;
                 blueScore = scores.blue;
-                if (redScore == grid.micePerTeam() || blueScore == grid.micePerTeam() || moveCount > 200)
+                
+                if (moveCount > 200) {
+                    continue allGames;
+                }
+                
+                if (redScore == grid.micePerTeam() || blueScore == grid.micePerTeam())
                     break;
             }
             
@@ -58,15 +76,17 @@ public class Simulator {
             java.lang.System.out.println("game: " + i + " moves: " + moveCount + " ; red: " + redScore + " ; blue: "
                     + blueScore + " ; time(ms): " + delta);
             
-            if (redScore > blueScore)
-                redWins++;
-            else if (blueScore > redScore)
-                blueWins++;
+            if (redScore == grid.micePerTeam() || blueScore == grid.micePerTeam())
+                if (redScore > blueScore)
+                    redWins++;
+                else if (blueScore > redScore)
+                    blueWins++;
             
         }
         
-        java.lang.System.out.println("total time: " + (java.lang.System.currentTimeMillis() - totalStart) + " red: "
-                + redWins + " blue: " + blueWins);
+        java.lang.System.out.println("total time: " + (java.lang.System.currentTimeMillis() - totalStart) + //
+                " red: " + redWins + " blue: " + blueWins + //
+                " headstarts:: red: " + redStartedAhead + " blue: " + blueStartedAhead);
         
     }
 }

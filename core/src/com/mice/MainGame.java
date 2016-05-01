@@ -62,7 +62,7 @@ public class MainGame extends ApplicationAdapter {
                 this.input.loadOpponent();
                 this.input.startGame(this.grid.activeTeam());
             }
-            this.grid.ctrl().valueBoard();
+            this.grid.ctrl().valueBoard(false);
         } catch (CheeseException e) {
             log.log(Level.SEVERE, "Grid setup failure", e);
         }
