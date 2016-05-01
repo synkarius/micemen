@@ -111,12 +111,26 @@ public class SceneGraph {
             if (grid.poles()[p])
                 batch.draw(Resource.pole, X_OFFSET + POLE_OFFSET_X + p * BLOCK_SIZE, POLE_HEIGHT_Y);
         
-        if (grid.redHand() != null)
+        float yOffsetForShift = 0;
+        boolean isShifting = grid.state().columnShifting != null;
+        if (isShifting)
+            yOffsetForShift = (float) (grid.state().yOffset / 4.0);
+        
+        if (grid.redHand() != null) {
+            if (isShifting) {
+                grid.state().redHandYOffset = yOffsetForShift;
+                grid.state().blueHandYOffset = 0;
+            }
             batch.draw(Resource.redHand, X_OFFSET + HAND_OFFSET_X + grid.redHand() * BLOCK_SIZE,
-                    POLE_HEIGHT_Y + HAND_OFFSET_Y);
-        else if (grid.blueHand() != null)
+                    POLE_HEIGHT_Y + HAND_OFFSET_Y + grid.state().redHandYOffset);
+        } else if (grid.blueHand() != null) {
+            if (isShifting) {
+                grid.state().redHandYOffset = 0;
+                grid.state().blueHandYOffset = yOffsetForShift;
+            }
             batch.draw(Resource.blueHand, X_OFFSET + HAND_OFFSET_X + grid.blueHand() * BLOCK_SIZE,
-                    POLE_HEIGHT_Y + HAND_OFFSET_Y);
+                    POLE_HEIGHT_Y + HAND_OFFSET_Y + grid.state().blueHandYOffset);
+        }
         
         if (grid.X() != null)
             batch.draw(Resource.x, X_OFFSET + THE_X_X_OFFSET + grid.X() * BLOCK_SIZE, POLE_HEIGHT_Y + HAND_OFFSET_Y);

@@ -20,6 +20,8 @@ public class GfxState {
     
     public Integer             columnShifting;
     public int                 yOffset;
+    public float               redHandYOffset;
+    public float               blueHandYOffset;
     
     private Menu               menu;
     private Anim               anim;
@@ -34,7 +36,7 @@ public class GfxState {
     }
     
     public void randomMouseEatsCheese() {
-        if (Math.random() > .9955) {
+        if (Math.random() > .9960) {
             List<Mouse> mice = grid.ctrl()
                     .getAllMice()
                     .stream()
