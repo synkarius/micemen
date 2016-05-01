@@ -7,7 +7,6 @@ import java.util.List;
 import graphical.Resource;
 import graphical.Resource.Graphic;
 import model.CheeseGrid;
-import model.EmptyBlock;
 import model.Mouse;
 import model.SimPoint;
 

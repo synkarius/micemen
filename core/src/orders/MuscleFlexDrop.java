@@ -15,11 +15,40 @@ public class MuscleFlexDrop implements IOrder {
     private boolean          finished;
     private boolean          setup;
     private boolean          flashy;
+    private boolean          soundPlayed;
     
     /** time before dropping */
     private static final int FACE_TIME = 60;
     /** duration of dropping */
-    private static final int DROP_TIME = 180;
+    private static final int DROP_TIME = 105;
+    
+    private void exit(CheeseGrid grid) throws CheeseException {
+        if (!grid.isGraphical())
+            throw new CheeseException("Non-graphical grid needn't do exit animations.");
+        
+        if (!flashy) {
+            if (++counter >= FACE_TIME) {
+                if (!soundPlayed) {
+                    Resource.jump.play();
+                    soundPlayed = true;
+                    mouse.graphic(Graphic.FALL);
+                    counter = 0;
+                }
+                if (counter >= DROP_TIME)
+                    vanishFinish(grid);
+            }
+        } else {
+            if (mouse.graphic() == Graphic.FALL) {
+                if (!soundPlayed) {
+                    Resource.jump.play();
+                    soundPlayed = true;
+                }
+                
+                if (++counter >= DROP_TIME)
+                    vanishFinish(grid);
+            }
+        }
+    }
     
     public MuscleFlexDrop(Mouse mouse, int x) {
         this.mouse = mouse;
@@ -34,7 +63,9 @@ public class MuscleFlexDrop implements IOrder {
             Team team = mouse.team();
             mouse = mouse.getOriginal(grid.id());
             int score = grid.ctrl().score(team);
-            flashy = score == grid.micePerTeam();
+            flashy = score == grid.micePerTeam() - 1;
+            mouse.graphic(!flashy ? Graphic.FACE_CAMERA : Graphic.MUSCLE1);
+            setup = true;
         }
         
         exit(grid);
@@ -50,36 +81,15 @@ public class MuscleFlexDrop implements IOrder {
         return OrderType.MUSCLE_FLEX_DROP;
     }
     
-    private void exit(CheeseGrid grid) {
-        int drop = flashy ? DROP_TIME * 3 : DROP_TIME;
-        int face = flashy ? FACE_TIME : FACE_TIME;
-        if (++counter < drop) {
-            if (flashy)
-                grid.state().anim().muscle(mouse);
-            else
-                mouse.graphic(Graphic.FACE_CAMERA);
-        } else {
-            mouse.graphic(Graphic.FALL);
-            // TODO: make Scenegraph drop the mouse first 13 pixels at once,
-            // then 2 per frame for 36 frames
-            
-            if (grid.isGraphical())
-                Resource.jump.play();
-            
-            if (counter >= face)
-                vanishFinish(grid);
-        }
-    }
-    
     private void vanishFinish(CheeseGrid grid) {
+        grid.eliminate(mouse);
+        finished = true;
+        
         if (grid.isGraphical()) {
             Scores scores = grid.ctrl().scores();
             grid.state().menu().redScore = scores.red;
             grid.state().menu().blueScore = scores.blue;
         }
-        
-        grid.eliminate(mouse);
-        finished = true;
     }
     
     /**

@@ -16,9 +16,11 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import control.KeyboardController;
 import control.KeyboardController.ControlMode;
 import graphical.Resource;
+import graphical.Resource.Graphic;
 import graphical.SceneGraph;
 import model.CheeseException;
 import model.CheeseGrid;
+import model.SimPoint;
 import util.Restart;
 
 public class MainGame extends ApplicationAdapter {
@@ -90,7 +92,7 @@ public class MainGame extends ApplicationAdapter {
         
         batch.begin();
         batch.draw(Resource.bg, SceneGraph.X_OFFSET, SceneGraph.Y_OFFSET);
-        SceneGraph.drawGrid(grid, batch);
+        SimPoint escapee = SceneGraph.drawGrid(grid, batch);
         batch.end();
         
         SceneGraph.drawBoxes(shaper);
@@ -98,6 +100,8 @@ public class MainGame extends ApplicationAdapter {
         batch.begin();
         SceneGraph.drawControls(grid, batch);
         SceneGraph.drawText(grid, batch, font);
+        if (escapee != null)
+            SceneGraph.drawEscapee(batch, escapee);
         batch.end();
         
         try {

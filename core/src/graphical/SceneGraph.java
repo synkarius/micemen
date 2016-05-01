@@ -11,6 +11,7 @@ import graphical.Resource.Graphic;
 import model.Block;
 import model.CheeseGrid;
 import model.Mouse;
+import model.SimPoint;
 
 public class SceneGraph {
     
@@ -32,12 +33,14 @@ public class SceneGraph {
         return Math.abs(grid.height() - y - 1);
     }
     
-    public static void drawGrid(CheeseGrid grid, SpriteBatch batch) {
+    /** returns escapee mouse if there is one */
+    public static SimPoint drawGrid(CheeseGrid grid, SpriteBatch batch) {
+        SimPoint escapee = null;
         
         for (int x = 0; x < grid.width(); x++) {
-            int shiftOffset = 0;
+            int yOffset = 0;
             if (grid.state().columnShifting != null && grid.state().columnShifting == x) {
-                shiftOffset = grid.state().yOffset;
+                yOffset = grid.state().yOffset;
             }
             
             for (int y = 0; y < grid.height(); y++) {
@@ -48,10 +51,19 @@ public class SceneGraph {
                 
                 if (block.isMouse()) {
                     Graphic graphic = block.graphic();
-                    if (block.graphic() != Graphic.EAT1) {
-                        graphic = block.graphic();
-                    } else {
-                        graphic = grid.state().anim().getFrameForEatingMouse((Mouse) block);
+                    switch (graphic) {
+                        case EAT1:
+                            graphic = grid.state().anim().getFrameForEatingMouse((Mouse) block);
+                            break;
+                        case MUSCLE1:
+                            graphic = grid.state().anim().getFrameForMuscle((Mouse) block);
+                            break;
+                        case FALL:
+                            yOffset = (int) grid.state().anim().mouseFallOffset((Mouse) block);
+                            escapee = new SimPoint(x, _y * BLOCK_SIZE + Y_OFFSET + yOffset);
+                            continue;
+                        default:
+                            break;
                     }
                     region = block.isRedMouse() ? graphic.red() : graphic.blue();
                     
@@ -62,9 +74,24 @@ public class SceneGraph {
                     continue;
                 }
                 
-                batch.draw(region, x * BLOCK_SIZE + X_OFFSET, _y * BLOCK_SIZE + Y_OFFSET + shiftOffset);
+                batch.draw(region, x * BLOCK_SIZE + X_OFFSET, _y * BLOCK_SIZE + Y_OFFSET + yOffset);
             }
         }
+        
+        return escapee;
+    }
+    
+    /**
+     * must draw escapee last so that it can be drawn over black blocks -- black
+     * blocks are necessary to make columnshifting look smooth
+     * 
+     * @param batch
+     * @param escapee
+     */
+    public static void drawEscapee(SpriteBatch batch, SimPoint escapee) {
+        int x = escapee.x() * SceneGraph.BLOCK_SIZE + SceneGraph.X_OFFSET;
+        TextureRegion fall = escapee.x() != 0 ? Graphic.FALL.red() : Graphic.FALL.blue();
+        batch.draw(fall, x, escapee.y());
     }
     
     public static void drawBoxes(ShapeRenderer shaper) {

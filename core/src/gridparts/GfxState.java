@@ -16,13 +16,16 @@ import model.Mouse.Team;
 /** for tracking changes to graphical state which are not a part of the model */
 public class GfxState {
     
-    private CheeseGrid grid;
+    private CheeseGrid         grid;
     
-    public Integer     columnShifting;
-    public int         yOffset;
+    public Integer             columnShifting;
+    public int                 yOffset;
     
-    private Menu       menu;
-    private Anim       anim;
+    private Menu               menu;
+    private Anim               anim;
+    
+    private static final float FALL_OFFSET           = -12;
+    private static final float FALL_FRAME_MULTIPLIER = (float) 0.25;
     
     public GfxState(CheeseGrid grid) {
         this.grid = grid;
@@ -57,28 +60,19 @@ public class GfxState {
     }
     
     public static class Anim {
-        private Map<Block, Integer> animFrame = new HashMap<>();
-        
-        public void putFrame(Mouse mouse, Integer frame) {
-            // if (animFrame.containsKey(mouse)) {
-            animFrame.put(mouse, frame);
-            // }
-        }
+        private Map<Block, Integer> frameMap = new HashMap<>();
         
         public void reset(Mouse mouse) {
             mouse.graphic(Graphic.STAND);
-            putFrame(mouse, 0);
-        }
-        
-        public Integer getFrame(Mouse mouse) {
-            return animFrame.getOrDefault(mouse, 0);
+            frameMap.put(mouse, 0);
         }
         
         /** alternates between walking and standing graphics */
         public void walk(Mouse mouse) {
-            int frame = getFrame(mouse);
+            int frame = frameMap.getOrDefault(mouse, 0);
+            ;
             int next = frame == 0 ? 1 : 0;
-            putFrame(mouse, next);
+            frameMap.put(mouse, next);
             
             if (next == 1)
                 mouse.graphic(Graphic.WALK);
@@ -86,27 +80,32 @@ public class GfxState {
                 mouse.graphic(Graphic.STAND);
         }
         
-        public boolean muscle(Mouse mouse) {
-            boolean finished = false;
-            int frame = getFrame(mouse);
-            int frameScaled = frame / 10;
+        public float mouseFallOffset(Mouse mouse) {
+            int frame = frameMap.getOrDefault(mouse, 0);
+            frameMap.put(mouse, --frame);
+            return FALL_OFFSET + frame * FALL_FRAME_MULTIPLIER;
+        }
+        
+        public Graphic getFrameForMuscle(Mouse mouse) {
+            int frame = frameMap.getOrDefault(mouse, 0);
+            int frameScaled = frame / 25;
             Graphic graphic;
             
             if (frameScaled >= Graphic.ANIM_FLEX.size()) {
                 frame = 0;
-                graphic = Graphic.FACE_CAMERA;
+                graphic = Graphic.FALL; // signals fall
+                mouse.graphic(graphic);
             } else {
                 graphic = Graphic.ANIM_FLEX.get(frameScaled);
             }
             
-            mouse.graphic(graphic);
-            putFrame(mouse, ++frame);
-            return finished;
+            frameMap.put(mouse, ++frame);
+            return graphic;
         }
         
         public Graphic getFrameForEatingMouse(Mouse mouse) {
             // boolean finished = false;
-            int frame = getFrame(mouse);
+            int frame = frameMap.getOrDefault(mouse, 0);
             int frameScaled = frame / 10;
             Graphic graphic;
             
@@ -118,7 +117,7 @@ public class GfxState {
                 graphic = Graphic.ANIM_EAT.get(frameScaled);
             }
             
-            putFrame(mouse, ++frame);
+            frameMap.put(mouse, ++frame);
             return graphic;
         }
     }
