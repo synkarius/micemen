@@ -23,7 +23,7 @@ public class ComputerPlayerBasic extends ComputerPlayer implements IController {
         List<ColumnShift> choices = super.getChoices();
         ValueCalc best = null;
         for (ColumnShift choice : choices) {
-            ValueCalc calc = ValueCalc.analyzeShift(choice, grid, team);
+            ValueCalc calc = ValueCalc.analyzeShift(choice, new CheeseGrid(grid), team);
             if (best == null || calc.value() > best.value())
                 best = calc;
         }

@@ -29,12 +29,12 @@ public class ValueCalc {
         return value;
     }
     
-    public static ValueCalc analyzeShift(ColumnShift shift, CheeseGrid grid, Team team) throws CheeseException {
+    public static ValueCalc analyzeShift(ColumnShift shift, CheeseGrid copygrid, Team team) throws CheeseException {
         
         // grid.nullifyParentLinks();
-        grid.ctrl().orders().add(shift);
-        grid.ctrl().executeAll();
-        int postValue = ComputerPlayerBasic.measureGridValue(grid, team);
+        copygrid.ctrl().orders().add(shift);
+        copygrid.ctrl().executeAll();
+        int postValue = ComputerPlayerBasic.measureGridValue(copygrid, team);
         
         return new ValueCalc(shift.x(), shift.dir(), postValue);
     }

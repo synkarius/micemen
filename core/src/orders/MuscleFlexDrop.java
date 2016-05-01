@@ -56,8 +56,10 @@ public class MuscleFlexDrop implements IOrder {
     
     @Override
     public void execute(CheeseGrid grid) throws CheeseException {
-        if (!grid.isGraphical())
+        if (!grid.isGraphical()) {
             vanishFinish(grid);
+            return;
+        }
         
         if (!setup) {
             Team team = mouse.team();
