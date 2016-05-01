@@ -32,8 +32,9 @@ public class ComputerPlayerBasic extends ComputerPlayer implements IController {
             throw new CheeseException("No choices available.");
         
         Combo combo = new Combo();
-        combo.add(new ColumnShift(best.x(), best.dir()));
         combo.add(new SetHand(grid, best.x()));
+        combo.add(new ColumnShift(best.x(), best.dir()));
+        
         
         grid.activePole(best.x());
         
