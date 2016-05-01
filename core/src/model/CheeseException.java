@@ -1,6 +1,6 @@
 package model;
 
-public class CheeseException extends Exception {
+public class CheeseException extends RuntimeException {
     
     public CheeseException(String string) {
         super(string);

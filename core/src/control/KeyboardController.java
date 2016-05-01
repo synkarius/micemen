@@ -12,6 +12,7 @@ import orders.ColumnShift;
 import orders.IOrder;
 import orders.PassTurn;
 import orders.SetHand;
+import simulate.Simulator;
 import util.Restart;
 
 public class KeyboardController implements IController {
@@ -103,7 +104,7 @@ public class KeyboardController implements IController {
     
     public void processInput() throws CheeseException {
         if (Gdx.input.isKeyJustPressed(Input.Keys.F12)) {
-            // TODO: switch to simulator
+            Simulator.simulate();
             
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
             java.lang.System.out.println(grid.recording().toString());
