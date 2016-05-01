@@ -47,6 +47,7 @@ public class MainGame extends ApplicationAdapter {
         }
         
         this.input = new KeyboardController().setMode(mode).setGrid(this.grid).setRestart(this::restart);
+        this.grid.recording().startRecording();
         
         try {
             if (!loaded)

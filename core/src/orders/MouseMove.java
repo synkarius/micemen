@@ -54,7 +54,10 @@ public class MouseMove implements IOrder {
              * mouse position
              */
             SimPoint next = iter.next();
-            int newX = current.x() + next.x();
+            SimPoint destination = current.add(next);
+            
+            grid.recording().addMove(applicableMouse.team(), current.x(), current.y(), destination.x(),
+                    destination.y());
             
             if (grid.isGraphical()) {
                 if (next.x() != 0)
@@ -62,7 +65,7 @@ public class MouseMove implements IOrder {
                 else if (next.y() != 0)
                     Resource.lo.play();
                 
-                if (newX == 0 || newX == grid.wMax())
+                if (destination.x() == 0 || destination.x() == grid.wMax())
                     applicableMouse.graphic(Graphic.UMBRELLA);
                 else
                     grid.state().anim().walk(applicableMouse);

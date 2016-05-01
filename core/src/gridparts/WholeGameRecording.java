@@ -4,10 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import control.Direction;
+import file.Board;
 import model.CheeseGrid;
 import model.Mouse.Team;
 
 public class WholeGameRecording {
+    
+    private CheeseGrid grid;
+    
+    public WholeGameRecording(CheeseGrid grid) {
+        this.grid = grid;
+    }
+    
     /** recording of a single move */
     private static class Move {
         public int  ox;
@@ -83,31 +91,34 @@ public class WholeGameRecording {
         
         if (on)
             for (Turn t : turns) {
-                readable.append(t.board)
-                        .append('\n')
-                        .append(t.activeTeam.toString())
-                        .append(" chooses ")
-                        .append("" + t.chosenShiftX)
-                        .append('-')
-                        .append(t.chosenShiftDir.toString())
-                        .append('\n')
-                        .append("results in")
-                        .append('\n');
-                t.moves.stream()
-                        .forEach(move -> readable.append(move.team.toString())
-                                .append(" : (")
-                                .append("" + move.ox)
-                                .append(", ")
-                                .append("" + move.oy)
-                                .append(") -> (")
-                                .append("" + move.dx)
-                                .append(", ")
-                                .append("" + move.dy)
-                                .append(")")
-                                .append('\n'));
-                readable.append('\n');
+                if (t.chosenShiftDir != null) {
+                    readable.append(t.board)
+                            .append('\n')
+                            .append(t.activeTeam.toString())
+                            .append(" chooses ")
+                            .append("" + t.chosenShiftX)
+                            .append('-')
+                            .append(t.chosenShiftDir.toString())
+                            .append('\n')
+                            .append("results in")
+                            .append('\n');
+                    t.moves.stream()
+                            .forEach(move -> readable.append(move.team.toString())
+                                    .append(" : (")
+                                    .append("" + move.ox)
+                                    .append(", ")
+                                    .append("" + move.oy)
+                                    .append(") -> (")
+                                    .append("" + move.dx)
+                                    .append(", ")
+                                    .append("" + move.dy)
+                                    .append(")")
+                                    .append('\n'));
+                    readable.append('\n');
+                }
+                
             }
-        
+        readable.append(Board.getBoardString(grid, true));
         return readable.toString();
     }
     

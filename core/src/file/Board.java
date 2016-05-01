@@ -22,7 +22,7 @@ import model.Mouse;
 import model.Mouse.Team;
 
 public class Board {
-    private static final Logger log       = Logger.getLogger(Board.class.getName());
+    private static final Logger log = Logger.getLogger(Board.class.getName());
     
     private static Path savePath() {
         return Paths.get("mice.txt").toAbsolutePath();
@@ -41,7 +41,7 @@ public class Board {
         
         for (int y = 0; y < grid.height(); y++) {
             if (pretty)
-                board.append(y).append(" ");
+                board.append(y % 10).append(" ");
             for (int x = 0; x < grid.width(); x++) {
                 Block block = grid.get(x, y);
                 switch (block.type()) {
@@ -62,7 +62,7 @@ public class Board {
             board.append("\n");
         }
         if (pretty)
-            board.append(" 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0");
+            board.append("  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0");
         
         return board.toString();
     }

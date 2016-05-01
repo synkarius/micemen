@@ -104,6 +104,9 @@ public class KeyboardController implements IController {
     public void processInput() throws CheeseException {
         if (Gdx.input.isKeyJustPressed(Input.Keys.F12)) {
             // TODO: switch to simulator
+            
+        } else if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
+            java.lang.System.out.println(grid.recording().toString());
         }
         
         if (isNewGameChoices()) {

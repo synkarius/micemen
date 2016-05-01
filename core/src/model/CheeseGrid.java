@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import control.Direction;
+import file.Board;
 import graphical.Resource.Graphic;
 import gridparts.GfxState;
 import gridparts.GridController;
@@ -49,7 +50,7 @@ public class CheeseGrid {
         this.poles = new boolean[width];
         this.micePerTeam = micePerTeam;
         this.ctrl = new GridController(this);
-        this.recording = new WholeGameRecording();
+        this.recording = new WholeGameRecording(this);
         this.state = new GfxState(this);
         this.gridID = getID();
     }
@@ -268,5 +269,10 @@ public class CheeseGrid {
     
     public boolean opponentWasCPU() {
         return opponentWasCPU;
+    }
+    
+    @Override
+    public String toString() {
+        return Board.getBoardString(this, true);
     }
 }
