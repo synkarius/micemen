@@ -1,6 +1,7 @@
 package control;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import gridparts.GridController.Scores;
@@ -15,16 +16,33 @@ import orders.SetHand;
 
 public class ComputerPlayerBasic extends ComputerPlayer implements IController {
     
-    private static final int BLUE_OFFSET    = 1;
-    private static final int MOUSE_PRESENCE = 20;
+    private static final int                    BLUE_OFFSET    = 1;
+    private static final int                    MOUSE_PRESENCE = 20;
+    
+    public static final Comparator<ColumnShift> RED_SORT;
+    public static final Comparator<ColumnShift> BLUE_SORT;
+    static {
+        RED_SORT = (a, b) -> {
+            int xCompare = Integer.compare(a.x(), b.x());
+            if (xCompare != 0)
+                return xCompare;
+            return a.dir().compareTo(b.dir());
+        };
+        BLUE_SORT = (a, b) -> {
+            int xCompare = Integer.compare(b.x(), a.x());
+            if (xCompare != 0)
+                return xCompare;
+            return a.dir().compareTo(b.dir());
+        };
+    }
     
     @Override
     public IOrder getOrder() throws CheeseException {
         
         List<ColumnShift> choices = super.getChoices();
-        // if (team == Team.BLUE)
-        Collections.reverse(choices);
-        // Collections.shuffle(choices);
+        Comparator<ColumnShift> comparator = team == Team.RED ? RED_SORT : BLUE_SORT;
+        Collections.sort(choices, comparator);
+        
         ValueCalc best = null;
         for (ColumnShift choice : choices) {
             ValueCalc calc = ValueCalc.analyzeShift(choice, new CheeseGrid(grid), team);

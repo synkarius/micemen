@@ -1,6 +1,7 @@
 package control;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import model.CheeseException;
@@ -46,7 +47,6 @@ public class ComputerPlayer implements IController {
                 choices.add(new ColumnShift(p, Direction.DOWN));
             }
         }
-        
         return choices;
     }
     

@@ -71,5 +71,4 @@ public class ColumnShift implements IOrder {
     public OrderType type() {
         return OrderType.COLUMN_SHIFT;
     }
-    
 }

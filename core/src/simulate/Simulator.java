@@ -20,16 +20,15 @@ public class Simulator {
         int blueWins = 0;
         int redStartedAhead = 0;
         int blueStartedAhead = 0;
-        int redWentFirst = 0;
-        int blueWentFirst = 0;
         
-        allGames: for (int i = 0; i < 1000; i++) {
-            CheeseGrid grid = Board.loadFromSave();
-            // CheeseGrid.getNewDefault();
-            // grid.activeTeam(Team.RED);
-            // grid.ctrl().fillGrid();
+        allGames: for (int i = 0; i < 100; i++) {
+            CheeseGrid grid = // Board.loadFromSave();
+                    CheeseGrid.getNewDefault();
+            grid.activeTeam(Team.RED);
+            grid.ctrl().fillGrid();
             grid.ctrl().recalculateMoves();
             grid.ctrl().executeAll();
+            // grid.recording().startRecording();
             
             Scores starting = grid.ctrl().valueBoard(true);
             if (starting.red > starting.blue) {
@@ -51,7 +50,7 @@ public class Simulator {
             
             long start = java.lang.System.currentTimeMillis();
             
-            thisGame: while (true) {
+            while (true) {
                 IController controller = grid.activeTeam() == Team.RED ? redController : blueController;
                 IOrder order = controller.getOrder();
                 moveCount++;
@@ -81,6 +80,8 @@ public class Simulator {
                     redWins++;
                 else if (blueScore > redScore)
                     blueWins++;
+            
+            // java.lang.System.out.println(grid.recording().toString());
             
         }
         
