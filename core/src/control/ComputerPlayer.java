@@ -1,21 +1,71 @@
 package control;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-import model.CheeseException;
+import gridparts.GridController.Scores;
+import model.Block;
 import model.CheeseGrid;
 import model.Mouse.Team;
 import orders.ColumnShift;
-import orders.Combo;
-import orders.IOrder;
-import orders.SetHand;
 
-public class ComputerPlayer implements IController {
+public abstract class ComputerPlayer implements IController {
+    
+    private static final int                    BLUE_OFFSET    = 1;
+    private static final int                    MOUSE_PRESENCE = 20;
+    
+    public static final Comparator<ColumnShift> RED_SORT;
+    public static final Comparator<ColumnShift> BLUE_SORT;
+    static {
+        RED_SORT = (a, b) -> {
+            int xCompare = Integer.compare(a.x(), b.x());
+            if (xCompare != 0)
+                return xCompare;
+            return a.dir().compareTo(b.dir());
+        };
+        BLUE_SORT = (a, b) -> {
+            int xCompare = Integer.compare(b.x(), a.x());
+            if (xCompare != 0)
+                return xCompare;
+            return a.dir().compareTo(b.dir());
+        };
+    }
+    
+    public static int measureGridValue(CheeseGrid grid, Team team) {
+        int score = 0;
+        
+        for (int x = 0; x < grid.width(); x++) {
+            for (int y = 0; y < grid.height(); y++) {
+                Block block = grid.get(x, y);
+                if (team == Team.RED && block.isRedMouse()) {
+                    // x score is positive -- red wants blue
+                    // and red mice on the right side
+                    score += x;
+                } else if (team == Team.BLUE && block.isBlueMouse()) {
+                    // ... this is a simplistic scoring mechanism, has problems,
+                    // but whatever, it's the easy cpu
+                    // (in particular, it doesn't bother with escaped mice)
+                    score += grid.width() - x - BLUE_OFFSET;
+                }
+            }
+        }
+        
+        Scores scores = grid.ctrl().scores();
+        if (team == Team.RED) {
+            score += scores.red * MOUSE_PRESENCE;
+            score -= scores.blue * MOUSE_PRESENCE;
+        } else if (team == Team.BLUE) {
+            score += scores.blue * MOUSE_PRESENCE;
+            score -= scores.red * MOUSE_PRESENCE;
+        }
+        
+        return score;
+    }
     
     protected CheeseGrid grid;
     protected Team       team;
+
     
     public ComputerPlayer grid(CheeseGrid grid) {
         this.grid = grid;
@@ -27,18 +77,7 @@ public class ComputerPlayer implements IController {
         return this;
     }
     
-    @Override
-    public IOrder getOrder() throws CheeseException {
-        List<ColumnShift> choices = getChoices();
-        int select = (int) (Math.random() * choices.size());
-        ColumnShift choice = choices.get(select);
-        
-        Combo combo = new Combo().add(choice).add(new SetHand(grid, choice.x()));
-        
-        return combo;
-    }
-    
-    protected List<ColumnShift> getChoices() {
+    protected static List<ColumnShift> getChoices(CheeseGrid grid) {
         List<ColumnShift> choices = new ArrayList<>();
         
         for (int p = 0; p < grid.poles().length; p++) {
@@ -49,5 +88,7 @@ public class ComputerPlayer implements IController {
         }
         return choices;
     }
+    
+    public abstract ComputerPlayer copy();
     
 }

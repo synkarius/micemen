@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import control.BlockIter;
-import control.ComputerPlayerBasic;
+import control.ComputerPlayer;
 import control.Direction;
 import model.Block;
 import model.Block.Type;
@@ -134,8 +134,8 @@ public class GridController {
     }
     
     public Scores valueBoard(boolean returnScores) {
-        int red = ComputerPlayerBasic.measureGridValue(grid, Team.RED);
-        int blue = ComputerPlayerBasic.measureGridValue(grid, Team.BLUE);
+        int red = ComputerPlayer.measureGridValue(grid, Team.RED);
+        int blue = ComputerPlayer.measureGridValue(grid, Team.BLUE);
         
         if (red > blue) {
             grid.state().menu().boardFavor(Team.RED, red - blue);
