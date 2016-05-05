@@ -52,6 +52,9 @@ public class GridController {
         public int blue;
     }
     
+    private static final List<Integer> xs = IntStream.range(0, 21).boxed().collect(Collectors.toList());
+    private static final List<Integer> ys = IntStream.range(0, 13).boxed().collect(Collectors.toList());
+    
     public GridController(CheeseGrid grid) {
         this.grid = grid;
         this.orders = new ArrayList<>();
@@ -65,8 +68,6 @@ public class GridController {
         int redCount = 0;
         int blueCount = 0;
         
-        List<Integer> xs = IntStream.range(0, grid.width()).boxed().collect(Collectors.toList());
-        List<Integer> ys = IntStream.range(0, grid.height()).boxed().collect(Collectors.toList());
         Collections.shuffle(xs);
         Collections.shuffle(ys);
         

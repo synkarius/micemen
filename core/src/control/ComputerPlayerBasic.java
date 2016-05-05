@@ -28,8 +28,11 @@ public class ComputerPlayerBasic extends ComputerPlayer implements IController {
                 best = result;
         }
         
-        if (best == null)
-            throw new CheeseException("No choices available.");
+        if (best == null) {
+            if (this.isCPUvsCPUOpponent)
+                return null; // indicates that someone has won
+            throw new CheeseException("No choices available.", grid);
+        }
         
         Combo combo = new Combo();
         combo.add(new SetHand(grid, best.x()));
@@ -39,7 +42,7 @@ public class ComputerPlayerBasic extends ComputerPlayer implements IController {
         
         return combo;
     }
-
+    
     @Override
     public ComputerPlayer copy() {
         ComputerPlayerBasic copy = new ComputerPlayerBasic();

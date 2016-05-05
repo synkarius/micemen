@@ -69,6 +69,8 @@ public class CheeseGrid {
                 }
             }
         }
+        for (int b = 0; b < poles.length; b++)
+            poles[b] = grid.poles[b];
         this.activeTeam = grid.activeTeam();
         this.isCopy = true;
     }

@@ -65,7 +65,7 @@ public abstract class ComputerPlayer implements IController {
     
     protected CheeseGrid grid;
     protected Team       team;
-
+    protected boolean    isCPUvsCPUOpponent;
     
     public ComputerPlayer grid(CheeseGrid grid) {
         this.grid = grid;
