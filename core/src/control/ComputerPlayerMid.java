@@ -72,25 +72,6 @@ public class ComputerPlayerMid extends ComputerPlayer {
                 best = child;
         }
         return best;
-        // List<SimulationNode> bottomLevelChildren = new ArrayList<>();
-        // getEndResults(allFather, bottomLevelChildren);
-        // SimulationNode best = null;
-        // for (SimulationNode node : bottomLevelChildren) {
-        // if (best == null || best.value() < node.value())
-        // best = node;
-        // }
-        // return best.getTopLevel();
-    }
-    
-    private static void getEndResults(SimulationNode node, List<SimulationNode> bottomLevelChildren) {
-        // analyze the tree and then pick something out of the first level
-        if (!node.children.isEmpty()) {
-            // this has children-- get them and then get back here
-            for (SimulationNode child : node.children)
-                getEndResults(child, bottomLevelChildren);
-        } else {
-            bottomLevelChildren.add(node);
-        }
     }
     
     public void branch(int rounds, CheeseGrid copygrid, SimulationNode parent) {
@@ -101,13 +82,17 @@ public class ComputerPlayerMid extends ComputerPlayer {
         --rounds;
         
         for (ColumnShift choice : choices) {
-            SimulationNode result;
+            SimulationNode child;
             
             if (rounds > 0) {
                 CheeseGrid nextBranchGrid = new CheeseGrid(copygrid);
                 
                 // no point in analyzing this one -- it's not the end result
-                result = new SimulationNode(choice.x(), choice.dir(), -1);
+                //--------------
+                // if this is the first level or recursion, this child is
+                //what will be used to create the chosen ColumnShift
+                // -- hence, the x & dir values do matter
+                child = new SimulationNode(choice.x(), choice.dir(), -1);
                 // SimulationNode.analyzeShift(choice, new CheeseGrid(copygrid),
                 // team);
                 
@@ -125,12 +110,12 @@ public class ComputerPlayerMid extends ComputerPlayer {
                 nextBranchGrid.ctrl().orders().add(opponentChoice);
                 nextBranchGrid.ctrl().executeAll();
                 
-                branch(rounds, nextBranchGrid, result);
+                branch(rounds, nextBranchGrid, child);
             } else {
-                result = SimulationNode.analyzeShift(choice, new CheeseGrid(copygrid), team);
+                child = SimulationNode.analyzeShift(choice, new CheeseGrid(copygrid), team);
             }
             
-            parent.linkToChild(result);
+            parent.linkToChild(child);
         }
     }
     

@@ -38,16 +38,12 @@ public abstract class ComputerPlayer implements IController {
         for (int x = 0; x < grid.width(); x++) {
             for (int y = 0; y < grid.height(); y++) {
                 Block block = grid.get(x, y);
-                if (team == Team.RED && block.isRedMouse()) {
-                    // x score is positive -- red wants blue
-                    // and red mice on the right side
-                    score += x;
-                } else if (team == Team.BLUE && block.isBlueMouse()) {
-                    // ... this is a simplistic scoring mechanism, has problems,
-                    // but whatever, it's the easy cpu
-                    // (in particular, it doesn't bother with escaped mice)
-                    score += grid.width() - x - BLUE_OFFSET;
-                }
+                if (block.isMouse())
+                    if (team == Team.RED) {
+                        score += x;
+                    } else if (team == Team.BLUE) {
+                        score += grid.width() - x - BLUE_OFFSET;
+                    }
             }
         }
         

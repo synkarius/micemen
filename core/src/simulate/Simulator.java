@@ -15,8 +15,8 @@ import orders.PassTurn;
 public class Simulator {
     public static void simulate() throws CheeseException {
         
-        boolean playSingle = true;
-        int games = 100;
+        boolean playSingle = false;
+        int games = playSingle ? 1 : 100;
         
         long totalStart = java.lang.System.currentTimeMillis();
         int redWins = 0;
@@ -45,13 +45,13 @@ public class Simulator {
             }
             
             ComputerPlayer redController = new ComputerPlayerBasic().grid(grid).team(Team.RED);
-            ComputerPlayer blueController = new ComputerPlayerMid().grid(grid).team(Team.BLUE);
+            ComputerPlayer blueController = new ComputerPlayerBasic().grid(grid).team(Team.BLUE);
             int redScore = 0;
             int blueScore = 0;
             int moveCount = 0;
             
             grid.ctrl().orders().add(new PassTurn());
-            if (!playSingle && Math.random() < .5)
+            if (playSingle || Math.random() < .5)
                 grid.ctrl().orders().add(new PassTurn());
             grid.ctrl().executeAll();
             

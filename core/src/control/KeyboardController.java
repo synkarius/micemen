@@ -54,15 +54,6 @@ public class KeyboardController implements IController {
         return this;
     }
     
-    public KeyboardController setOpponent(boolean cpu) {
-        IController blue = this;
-        if (cpu)
-            blue = new ComputerPlayerBasic().grid(grid).team(Team.BLUE);
-        setControllers(this, blue);
-        
-        return this;
-    }
-    
     public boolean isReady() {
         return mode != null && grid != null;
     }
@@ -121,12 +112,12 @@ public class KeyboardController implements IController {
                     setControllers(this, this);
                 } else if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
                     // cpu
-                    setControllers(this, new ComputerPlayerBasic().grid(grid).team(Team.BLUE));
+                    setControllers(this, new ComputerPlayerMid().grid(grid).team(Team.BLUE));
                     choseCPU = true;
                 } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
                     // cpu vs cpu
                     setControllers(new ComputerPlayerBasic().grid(grid).team(Team.RED),
-                            new ComputerPlayerBasic().grid(grid).team(Team.BLUE));
+                            new ComputerPlayerMid().grid(grid).team(Team.BLUE));
                 }
                 if (controllersAreSetUp()) {
                     if (choseCPU) {
