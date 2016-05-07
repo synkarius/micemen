@@ -1,10 +1,10 @@
 package control;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import model.Block;
 import model.CheeseException;
 import model.CheeseGrid;
 import model.Mouse.Team;
@@ -13,18 +13,16 @@ import orders.Combo;
 import orders.IOrder;
 import orders.SetHand;
 
-public class ComputerPlayerMid extends ComputerPlayer {
+public class ComputerPlayerMid extends ComputerPlayerBasic {
     
     private ComputerPlayer          opponent  = new ComputerPlayerBasic();
     private int                     lookAhead = 2;
     private Comparator<ColumnShift> comparator;
-    // private Comparator<ColumnShift> opponentComparator;
     
     @Override
     public ComputerPlayer team(Team team) {
         super.team(team);
         comparator = team == Team.RED ? RED_SORT : BLUE_SORT;
-        // opponentComparator = team == Team.BLUE ? RED_SORT : BLUE_SORT;
         return this;
     }
     
@@ -40,8 +38,29 @@ public class ComputerPlayerMid extends ComputerPlayer {
         return this;
     }
     
+    private int gap() {
+        int min = grid.wMax();
+        int max = 0;
+        for (int x = 0; x < grid.width(); x++) {
+            for (int y = 0; y < grid.height(); y++) {
+                Block block = grid.get(x, y);
+                boolean countMouse = (block.isBlueMouse() && team == Team.BLUE)
+                        || (block.isRedMouse() && team == Team.RED);
+                if (countMouse) {
+                    if (x > max)
+                        max = x;
+                    if (x < min)
+                        x = min;
+                }
+            }
+        }
+        return Math.abs(max - min);
+    }
+    
     @Override
     public IOrder getOrder() throws CheeseException {
+        if (grid.ctrl().score(team) > 0)
+            return super.getOrder();
         
         // save state for multiple lookahead:
         CheeseGrid copygrid = new CheeseGrid(grid);
@@ -88,22 +107,17 @@ public class ComputerPlayerMid extends ComputerPlayer {
                 CheeseGrid nextBranchGrid = new CheeseGrid(copygrid);
                 
                 // no point in analyzing this one -- it's not the end result
-                //--------------
+                // --------------
                 // if this is the first level or recursion, this child is
-                //what will be used to create the chosen ColumnShift
+                // what will be used to create the chosen ColumnShift
                 // -- hence, the x & dir values do matter
                 child = new SimulationNode(choice.x(), choice.dir(), -1);
-                // SimulationNode.analyzeShift(choice, new CheeseGrid(copygrid),
-                // team);
                 
                 nextBranchGrid.ctrl().orders().add(choice);
                 nextBranchGrid.ctrl().executeAll();
                 
                 // opponent chooses a move
                 opponent.grid(nextBranchGrid);
-                // List<ColumnShift> opponentChoices =
-                // getChoices(nextBranchGrid);
-                // Collections.sort(opponentChoices, opponentComparator);
                 IOrder opponentChoice = opponent.getOrder();
                 if (opponentChoice == null)
                     continue;

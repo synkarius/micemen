@@ -45,7 +45,7 @@ public class Simulator {
             }
             
             ComputerPlayer redController = new ComputerPlayerBasic().grid(grid).team(Team.RED);
-            ComputerPlayer blueController = new ComputerPlayerBasic().grid(grid).team(Team.BLUE);
+            ComputerPlayer blueController = new ComputerPlayerMid().grid(grid).team(Team.BLUE);
             int redScore = 0;
             int blueScore = 0;
             int moveCount = 0;

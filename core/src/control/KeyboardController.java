@@ -133,13 +133,19 @@ public class KeyboardController implements IController {
                 boolean chose = false;
                 
                 // TODO: actual difficulty differences
+                int lookAhead = 1; // really 0
                 if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
                     chose = true;
+                    lookAhead = 4;
                 } else if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
                     chose = true;
+                    lookAhead = 2;
                 } else if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
                     chose = true;
                 }
+                
+                if (blue instanceof ComputerPlayerMid)
+                    ((ComputerPlayerMid) blue).lookAhead(lookAhead);
                 
                 if (chose)
                     startGame(null);

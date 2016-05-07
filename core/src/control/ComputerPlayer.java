@@ -77,7 +77,7 @@ public abstract class ComputerPlayer implements IController {
         List<ColumnShift> choices = new ArrayList<>();
         
         for (int p = 0; p < grid.poles().length; p++) {
-            if (grid.poles()[p]) {
+            if (grid.poles()[p] && grid.ctrl().poleIsAvailable(p)) {
                 choices.add(new ColumnShift(p, Direction.UP));
                 choices.add(new ColumnShift(p, Direction.DOWN));
             }
