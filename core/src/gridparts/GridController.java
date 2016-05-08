@@ -141,11 +141,12 @@ public class GridController {
     }
     
     public void valueBoard(boolean returnScores) {
-        Scores eval = scores(grid, true);
-        int red = eval.redBoardValue;
-        int blue = eval.blueBoardValue;
-        
         if (grid.isGraphical()) {
+            Scores eval = scores(grid, true);
+            int red = eval.redBoardValue;
+            int blue = eval.blueBoardValue;
+            
+            
             if (red > blue) {
                 grid.state().menu().boardFavor(Team.RED, red - blue);
             } else if (blue > red) {
@@ -186,6 +187,7 @@ public class GridController {
         return count;
     }
     
+    /** simple version */
     public int score(Team team) {
         int miceLeft = 0;
         for (int x = 0; x < grid.width(); x++) {
@@ -199,6 +201,7 @@ public class GridController {
         return grid.micePerTeam() - miceLeft;
     }
     
+    /** does-everything version */
     public static Scores scores(CheeseGrid grid, boolean doValue) {
         Scores result = new Scores();
         int redsLeft = 0;
@@ -238,9 +241,7 @@ public class GridController {
         CheeseGrid copygrid = new CheeseGrid(grid);
         Team lastTeam = grid.activeTeam() == Team.RED ? Team.RED : Team.BLUE;
         
-        List<IOrder> newOrders = recalc(copygrid, lastTeam);
-        
-        orders.addAll(newOrders);
+        orders.addAll(recalc(copygrid, lastTeam));
     }
     
     private static List<IOrder> recalc(CheeseGrid copygrid, Team lastTeam) throws CheeseException {
@@ -282,16 +283,15 @@ public class GridController {
         return results;
     }
     
-    private static IOrder findFirstMove(CheeseGrid copygrid, Iterator<Mouse> mice, boolean fallsOnly)
+    private static IOrder findFirstMove(CheeseGrid copygrid, Iterator<Mouse> miceIter, boolean fallsOnly)
             throws CheeseException {
         // TODO: mutating the copygrid as part of the move-getting process is
         // kind of sloppy
         // -- better to create full MouseMoves and MuscleFlexDrops and apply
         // them on the spot
         
-        while (mice.hasNext()) {
-            // for (Mouse mouse : mice) {
-            Mouse mouse = mice.next();
+        while (miceIter.hasNext()) {
+            Mouse mouse = miceIter.next();
             MouseMove move = mouse.getMoves(copygrid, fallsOnly);
             SimPoint total = move.consolidate();
             int totalX = Math.abs(total.x());
@@ -316,13 +316,6 @@ public class GridController {
             }
         }
         return null;
-    }
-    
-    public List<Block> columnCopy(int x) {
-        List<Block> result = new ArrayList<>();
-        for (int y = 0; y < grid.height(); y++)
-            result.add(grid.get(x, y));
-        return result;
     }
     
     public MuscleFlexDrop removeEscapedMice() {
