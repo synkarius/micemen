@@ -1,11 +1,14 @@
 package gridparts;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import control.BlockIter;
+import control.Direction;
 import graphical.Resource.Graphic;
 import model.Block;
 import model.CheeseGrid;
@@ -37,13 +40,16 @@ public class GfxState {
         this.anim = new Anim();
     }
     
+    public static boolean isPointing(Mouse b) {
+        return b.graphic() == Graphic.POINT;
+    }
+    
     public void randomMouseEatsCheese() {
         if (Math.random() > .9960) {
-            List<Mouse> mice = grid.ctrl()
-                    .getAllMice()
-                    .stream()
-                    .filter(mouse -> mouse.graphic() == Graphic.POINT)
-                    .collect(Collectors.toList());
+            BlockIter<Mouse> iter = new BlockIter<>(grid, Direction.DOWN, Direction.RIGHT, 0, 0, Mouse.class)
+                    .filter(GfxState::isPointing);
+            List<Mouse> mice = new ArrayList<>();
+            iter.forEachRemaining(mouse -> mice.add(mouse));
             if (mice.size() > 0) {
                 Collections.shuffle(mice);
                 mice.get(0).graphic(Graphic.EAT1);

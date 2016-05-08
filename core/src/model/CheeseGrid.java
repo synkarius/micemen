@@ -3,6 +3,7 @@ package model;
 import java.util.Arrays;
 import java.util.List;
 
+import control.BlockIter;
 import control.Direction;
 import file.Board;
 import graphical.Resource.Graphic;
@@ -11,7 +12,6 @@ import gridparts.GridController;
 import gridparts.WholeGameRecording;
 import model.Block.Type;
 import model.Mouse.Team;
-import orders.ColumnShift;
 import simulate.SimulationNode;
 
 public class CheeseGrid {
@@ -96,8 +96,8 @@ public class CheeseGrid {
     
     public void makeGraphical() {
         this.isGraphical = true;
-        for (Mouse mouse : ctrl().getAllMice())
-            mouse.graphic(Graphic.STAND);
+        BlockIter<Mouse> iter = new BlockIter<>(this, Direction.DOWN, Direction.RIGHT, 0, 0, Mouse.class);
+        iter.forEachRemaining(mouse -> mouse.graphic(Graphic.STAND));
         this.state.init();
     }
     
