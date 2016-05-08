@@ -13,9 +13,6 @@ import orders.ColumnShift;
 
 public abstract class ComputerPlayer implements IController {
     
-    private static final int                    BLUE_OFFSET    = 1;
-    private static final int                    MOUSE_PRESENCE = 20;
-    
     public static final Comparator<ColumnShift> RED_SORT;
     public static final Comparator<ColumnShift> BLUE_SORT;
     static {
@@ -33,32 +30,7 @@ public abstract class ComputerPlayer implements IController {
         };
     }
     
-    public static int measureGridValue(CheeseGrid grid, Team team) {
-        int score = 0;
-        
-        for (int x = 0; x < grid.width(); x++) {
-            for (int y = 0; y < grid.height(); y++) {
-                Block block = grid.get(x, y);
-                if (block.isMouse())
-                    if (team == Team.RED) {
-                        score += x;
-                    } else if (team == Team.BLUE) {
-                        score += grid.width() - x - BLUE_OFFSET;
-                    }
-            }
-        }
-        
-        Scores scores = grid.ctrl().scores();
-        if (team == Team.RED) {
-            score += scores.red * MOUSE_PRESENCE;
-            score -= scores.blue * MOUSE_PRESENCE;
-        } else if (team == Team.BLUE) {
-            score += scores.blue * MOUSE_PRESENCE;
-            score -= scores.red * MOUSE_PRESENCE;
-        }
-        
-        return score;
-    }
+    
     
     protected CheeseGrid grid;
     protected Team       team;

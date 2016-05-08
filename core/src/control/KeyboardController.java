@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
 import file.Board;
+import gridparts.GridController;
 import gridparts.GridController.Scores;
 import model.CheeseException;
 import model.CheeseGrid;
@@ -190,13 +191,13 @@ public class KeyboardController implements IController {
         } else if (mode == ControlMode.GAME) {
             // PLAY THE GAME
             
-            Scores scores = grid.ctrl().scores();
+            Scores scores = GridController.scores(grid, false);
             boolean unprocessedOrdersExist = grid.ctrl().orders().size() > 0;
-            boolean gameIsOver = (scores.red == grid.micePerTeam() || scores.blue == grid.micePerTeam())
+            boolean gameIsOver = (scores.redScore == grid.micePerTeam() || scores.blueScore == grid.micePerTeam())
                     && !unprocessedOrdersExist;
             
             if (gameIsOver) {
-                Team winner = scores.red > scores.blue ? Team.RED : Team.BLUE;
+                Team winner = scores.redScore > scores.blueScore ? Team.RED : Team.BLUE;
                 
                 mode = ControlMode.GAME_OVER;
                 grid.state().menu().gameOverWithWinner(winner);

@@ -5,6 +5,8 @@ import java.util.List;
 
 import control.ComputerPlayer;
 import control.Direction;
+import gridparts.GridController;
+import gridparts.GridController.Scores;
 import model.CheeseException;
 import model.CheeseGrid;
 import model.Mouse.Team;
@@ -76,7 +78,10 @@ public class SimulationNode {
         
         node.x = node.shift.x();
         node.dir = node.shift.dir();
-        node.value = ComputerPlayer.measureGridValue(node.grid, node.team);
+        
+        Scores eval = GridController.scores(node.grid, true);
+        
+        node.value = node.team == Team.RED ? eval.redBoardValue : eval.blueBoardValue;
         node.analyzed = true;
     }
     

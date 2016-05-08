@@ -2,6 +2,7 @@ package orders;
 
 import graphical.Resource;
 import graphical.Resource.Graphic;
+import gridparts.GridController;
 import gridparts.GridController.Scores;
 import model.CheeseException;
 import model.CheeseGrid;
@@ -88,9 +89,9 @@ public class MuscleFlexDrop implements IOrder {
         finished = true;
         
         if (grid.isGraphical()) {
-            Scores scores = grid.ctrl().scores();
-            grid.state().menu().redScore = scores.red;
-            grid.state().menu().blueScore = scores.blue;
+            Scores scores = GridController.scores(grid, false);
+            grid.state().menu().redScore = scores.redScore;
+            grid.state().menu().blueScore = scores.blueScore;
         }
     }
     

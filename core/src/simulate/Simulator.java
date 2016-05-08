@@ -2,9 +2,9 @@ package simulate;
 
 import control.ComputerPlayer;
 import control.ComputerPlayerBasic;
-import control.ComputerPlayerMid;
 import control.IController;
 import file.Board;
+import gridparts.GridController;
 import gridparts.GridController.Scores;
 import model.CheeseException;
 import model.CheeseGrid;
@@ -17,7 +17,7 @@ public class Simulator {
     public static void simulate() throws CheeseException {
         
         boolean playSingle = false;
-        int games = playSingle ? 1 : 100;
+        int games = playSingle ? 1 : 1000;
         
         long totalStart = java.lang.System.currentTimeMillis();
         int redWins = 0;
@@ -38,15 +38,15 @@ public class Simulator {
             grid.ctrl().executeAll();
             grid.recording().startRecording();
             
-            Scores starting = grid.ctrl().valueBoard(true);
-            if (starting.red > starting.blue) {
+            Scores starting = GridController.scores(grid, true);
+            if (starting.redBoardValue > starting.blueBoardValue) {
                 redStartedAhead++;
-            } else if (starting.blue > starting.red) {
+            } else if (starting.blueBoardValue > starting.redBoardValue) {
                 blueStartedAhead++;
             }
             
             ComputerPlayer redController = new ComputerPlayerBasic().grid(grid).team(Team.RED);
-            ComputerPlayer blueController = new ComputerPlayerMid().grid(grid).team(Team.BLUE);
+            ComputerPlayer blueController = new ComputerPlayerBasic().grid(grid).team(Team.BLUE);
             int redScore = 0;
             int blueScore = 0;
             int moveCount = 0;
@@ -66,9 +66,9 @@ public class Simulator {
                 grid.ctrl().executeAll();
                 
                 if (order.type() != OrderType.PROGRESS) {
-                    Scores scores = grid.ctrl().scores();
-                    redScore = scores.red;
-                    blueScore = scores.blue;
+                    Scores scores = GridController.scores(grid, false);
+                    redScore = scores.redScore;
+                    blueScore = scores.blueScore;
                     
                     if (++moveCount > 200) {
                         continue allGames;

@@ -13,6 +13,7 @@ import java.util.stream.IntStream;
 import control.BlockIter;
 import control.ComputerPlayer;
 import control.Direction;
+import gridparts.GridController.Scores;
 import model.Block;
 import model.CheeseBlock;
 import model.CheeseException;
@@ -44,12 +45,19 @@ public class GridController {
                 Arrays.asList(false, true, true, false, true, true, false, true, true, false, true, true, false));
         PLACEMENT.put(20, empty);
     }
-    private static final List<Integer> VERBOTEN    = Arrays.asList(0, 1, 8, 9, 10, 11, 12, 19, 20);
-    private static final int           CHEESE_WALL = 7;
+    private static final List<Integer> VERBOTEN       = Arrays.asList(0, 1, 8, 9, 10, 11, 12, 19, 20);
+    private static final int           CHEESE_WALL    = 7;
+    
+    private static final int           BLUE_OFFSET    = 1;
+    private static final int           MOUSE_PRESENCE = 20;
     
     public static class Scores {
-        public int red;
-        public int blue;
+        /** escapees */
+        public int redScore;
+        public int blueScore;
+        /** board values */
+        public int redBoardValue;
+        public int blueBoardValue;
     }
     
     private static final List<Integer> xs = IntStream.range(0, 21).boxed().collect(Collectors.toList());
@@ -132,25 +140,20 @@ public class GridController {
         }
     }
     
-    public Scores valueBoard(boolean returnScores) {
-        int red = ComputerPlayer.measureGridValue(grid, Team.RED);
-        int blue = ComputerPlayer.measureGridValue(grid, Team.BLUE);
+    public void valueBoard(boolean returnScores) {
+        Scores eval = scores(grid, true);
+        int red = eval.redBoardValue;
+        int blue = eval.blueBoardValue;
         
-        if (red > blue) {
-            grid.state().menu().boardFavor(Team.RED, red - blue);
-        } else if (blue > red) {
-            grid.state().menu().boardFavor(Team.BLUE, blue - red);
-        } else {
-            grid.state().menu().message = "Fair Game";
+        if (grid.isGraphical()) {
+            if (red > blue) {
+                grid.state().menu().boardFavor(Team.RED, red - blue);
+            } else if (blue > red) {
+                grid.state().menu().boardFavor(Team.BLUE, blue - red);
+            } else {
+                grid.state().menu().message = "Fair Game";
+            }
         }
-        
-        if (returnScores) {
-            Scores scores = new Scores();
-            scores.red = red;
-            scores.blue = blue;
-            return scores;
-        } else
-            return null;
     }
     
     private int columnCheeseCount(int x) {
@@ -196,7 +199,7 @@ public class GridController {
         return grid.micePerTeam() - miceLeft;
     }
     
-    public Scores scores() {
+    public static Scores scores(CheeseGrid grid, boolean doValue) {
         Scores result = new Scores();
         int redsLeft = 0;
         int bluesLeft = 0;
@@ -208,11 +211,20 @@ public class GridController {
                     redsLeft++;
                 else if (block.isBlueMouse())
                     bluesLeft++;
+                
+                if (doValue && block.isMouse()) {
+                    result.redBoardValue += x;
+                    result.blueBoardValue += grid.width() - x - BLUE_OFFSET;
+                }
             }
         }
         
-        result.red = grid.micePerTeam() - redsLeft;
-        result.blue = grid.micePerTeam() - bluesLeft;
+        result.redScore = grid.micePerTeam() - redsLeft;
+        result.blueScore = grid.micePerTeam() - bluesLeft;
+        if (doValue) {
+            result.redBoardValue += (result.redScore - result.blueScore) * MOUSE_PRESENCE;
+            result.blueBoardValue += (result.blueScore - result.redScore) * MOUSE_PRESENCE;
+        }
         
         return result;
     }
