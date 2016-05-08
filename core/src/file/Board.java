@@ -154,7 +154,6 @@ public class Board {
         }
         
         result.activeTeam(team);
-        result.isLoaded(true);
         result.opponentWasCPU(opponentWasCPU);
         return result;
     }

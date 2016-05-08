@@ -10,6 +10,7 @@ import model.CheeseException;
 import model.CheeseGrid;
 import model.Mouse.Team;
 import orders.IOrder;
+import orders.OrderType;
 import orders.PassTurn;
 
 public class Simulator {
@@ -60,21 +61,22 @@ public class Simulator {
             while (true) {
                 IController controller = grid.activeTeam() == Team.RED ? redController : blueController;
                 IOrder order = controller.getOrder();
-                moveCount++;
                 
                 grid.ctrl().orders().add(order);
                 grid.ctrl().executeAll();
                 
-                Scores scores = grid.ctrl().scores();
-                redScore = scores.red;
-                blueScore = scores.blue;
-                
-                if (moveCount > 200) {
-                    continue allGames;
+                if (order.type() != OrderType.PROGRESS) {
+                    Scores scores = grid.ctrl().scores();
+                    redScore = scores.red;
+                    blueScore = scores.blue;
+                    
+                    if (++moveCount > 200) {
+                        continue allGames;
+                    }
+                    
+                    if (redScore == grid.micePerTeam() || blueScore == grid.micePerTeam())
+                        break;
                 }
-                
-                if (redScore == grid.micePerTeam() || blueScore == grid.micePerTeam())
-                    break;
             }
             
             long delta = java.lang.System.currentTimeMillis() - start;

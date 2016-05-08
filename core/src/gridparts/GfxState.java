@@ -22,6 +22,9 @@ public class GfxState {
     public float               redHandYOffset;
     public float               blueHandYOffset;
     
+    public int                 thinkingReady;
+    public double              thinkingTotal;
+    
     private Menu               menu;
     private Anim               anim;
     

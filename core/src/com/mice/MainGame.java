@@ -109,6 +109,8 @@ public class MainGame extends ApplicationAdapter {
             SceneGraph.drawText(grid, batch, font);
             if (escapee != null)
                 SceneGraph.drawEscapee(batch, escapee);
+            if (grid.state().thinkingTotal != 0)
+                SceneGraph.drawThinking(grid, batch, font, shaper);
             batch.end();
             
             try {

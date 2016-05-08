@@ -11,6 +11,8 @@ import gridparts.GridController;
 import gridparts.WholeGameRecording;
 import model.Block.Type;
 import model.Mouse.Team;
+import orders.ColumnShift;
+import simulate.SimulationNode;
 
 public class CheeseGrid {
     private Block[][]          grid;
@@ -23,10 +25,10 @@ public class CheeseGrid {
     private Integer            redHand;
     private Integer            blueHand;
     
-    private boolean            isCopy;
-    private boolean            isLoaded;
     private boolean            opponentWasCPU;
     private boolean            isGraphical;
+    
+    private SimulationNode     lastChosen;
     
     /**
      * break up the jobs of the grid into 4 parts: display, control, recording,
@@ -72,7 +74,6 @@ public class CheeseGrid {
         for (int b = 0; b < poles.length; b++)
             poles[b] = grid.poles[b];
         this.activeTeam = grid.activeTeam();
-        this.isCopy = true;
     }
     
     public GfxState state() {
@@ -170,6 +171,8 @@ public class CheeseGrid {
             grid[x][grid[x].length - 1] = copy[0];
             
         }
+        
+        lastChosen = new SimulationNode(x, dir, 0);
     }
     
     public void switcH(Block blockA, Block blockB) {
@@ -237,6 +240,10 @@ public class CheeseGrid {
         activePole = x;
     }
     
+    public SimulationNode lastChosen() {
+        return lastChosen;
+    }
+    
     public Integer redHand() {
         return redHand;
     }
@@ -259,10 +266,6 @@ public class CheeseGrid {
     
     public static CheeseGrid getNewDefault() {
         return new CheeseGrid(21, 13, 12);
-    }
-    
-    public void isLoaded(boolean b) {
-        this.isLoaded = b;
     }
     
     public void opponentWasCPU(boolean b) {

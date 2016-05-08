@@ -106,6 +106,21 @@ public class SceneGraph {
         shaper.end();
     }
     
+    public static void drawThinking(CheeseGrid grid, SpriteBatch batch, BitmapFont font, ShapeRenderer shaper) {
+        shaper.begin(ShapeType.Filled);
+        // menu box
+        shaper.setColor(Color.PURPLE);
+        shaper.rect(X_OFFSET, 0, BLOCK_SIZE * 21, 30);
+        if (grid.state().thinkingReady > 0) {
+            shaper.setColor(Color.GREEN);
+            float percent = (float) (grid.state().thinkingReady / grid.state().thinkingTotal);
+            shaper.rect(X_OFFSET, 0, BLOCK_SIZE * 21 * percent, 30);
+        }
+        shaper.end();
+        
+        font.draw(batch, "Thinking ...", MENU_TEXT_X_OFFSET, 200);
+    }
+    
     public static void drawControls(CheeseGrid grid, SpriteBatch batch) {
         for (int p = 0; p < grid.poles().length; p++)
             if (grid.poles()[p])

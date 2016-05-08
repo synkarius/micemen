@@ -144,8 +144,8 @@ public class KeyboardController implements IController {
                     chose = true;
                 }
                 
-                if (blue instanceof ComputerPlayerMid)
-                    ((ComputerPlayerMid) blue).lookAhead(lookAhead);
+                // if (blue instanceof ComputerPlayerMid)
+                // ((ComputerPlayerMid) blue).lookAhead(lookAhead);
                 
                 if (chose)
                     startGame(null);

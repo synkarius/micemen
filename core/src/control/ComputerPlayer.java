@@ -1,6 +1,7 @@
 package control;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -73,7 +74,7 @@ public abstract class ComputerPlayer implements IController {
         return this;
     }
     
-    protected static List<ColumnShift> getChoices(CheeseGrid grid) {
+    public static List<ColumnShift> getChoices(CheeseGrid grid) {
         List<ColumnShift> choices = new ArrayList<>();
         
         for (int p = 0; p < grid.poles().length; p++) {
@@ -82,7 +83,30 @@ public abstract class ComputerPlayer implements IController {
                 choices.add(new ColumnShift(p, Direction.DOWN));
             }
         }
+        
+        Comparator<ColumnShift> comparator = grid.activeTeam() == Team.RED ? RED_SORT : BLUE_SORT;
+        Collections.sort(choices, comparator);
+        
         return choices;
+    }
+    
+    protected int gap() {
+        int min = grid.wMax();
+        int max = 0;
+        for (int x = 0; x < grid.width(); x++) {
+            for (int y = 0; y < grid.height(); y++) {
+                Block block = grid.get(x, y);
+                boolean countMouse = (block.isBlueMouse() && team == Team.BLUE)
+                        || (block.isRedMouse() && team == Team.RED);
+                if (countMouse) {
+                    if (x > max)
+                        max = x;
+                    if (x < min)
+                        x = min;
+                }
+            }
+        }
+        return Math.abs(max - min);
     }
     
     public abstract ComputerPlayer copy();
