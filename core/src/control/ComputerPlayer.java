@@ -1,6 +1,7 @@
 package control;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -22,12 +23,26 @@ public abstract class ComputerPlayer implements IController {
     public static final Comparator<ColumnShift> BLUE_SORT;
     static {
         RED_SORT = (a, b) -> {
+            if (a == null && b == null)
+                return 0;
+            if (a == null && b != null)
+                return 1;
+            if (a != null && b == null)
+                return -1;
+            
             int xCompare = Integer.compare(a.x(), b.x());
             if (xCompare != 0)
                 return xCompare;
             return a.dir().compareTo(b.dir());
         };
         BLUE_SORT = (a, b) -> {
+            if (a == null && b == null)
+                return 0;
+            if (a == null && b != null)
+                return 1;
+            if (a != null && b == null)
+                return -1;
+            
             int xCompare = Integer.compare(b.x(), a.x());
             if (xCompare != 0)
                 return xCompare;
@@ -53,18 +68,21 @@ public abstract class ComputerPlayer implements IController {
         return this;
     }
     
-    public static List<ColumnShift> getChoices(CheeseGrid grid) {
-        List<ColumnShift> choices = new ArrayList<>();
+    public static ColumnShift[] getChoices(CheeseGrid grid) {
+        ColumnShift[] choices = new ColumnShift[grid.width() * 2];
         
         for (int p = 0; p < grid.poles().length; p++) {
             if (grid.poles()[p] && grid.ctrl().poleIsAvailable(p)) {
-                choices.add(new ColumnShift(p, Direction.UP));
-                choices.add(new ColumnShift(p, Direction.DOWN));
+                choices[p] = new ColumnShift(p, Direction.UP);
+                choices[grid.width() + p] = new ColumnShift(p, Direction.DOWN);
+                // choices.add(new ColumnShift(p, Direction.UP));
+                // choices.add(new ColumnShift(p, Direction.DOWN));
             }
         }
         
         Comparator<ColumnShift> comparator = grid.activeTeam() == Team.RED ? RED_SORT : BLUE_SORT;
-        Collections.sort(choices, comparator);
+        Arrays.sort(choices, comparator);
+        // Collections.sort(choices, comparator);
         
         return choices;
     }

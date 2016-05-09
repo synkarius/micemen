@@ -31,12 +31,12 @@ public class NCSimNodeTree {
         if (topsIsEmpty()) {
             /** assuming that this player is the active team in the grid */
             
-            List<ColumnShift> possibilities = ComputerPlayer.getChoices(grid);
-            for (int s = 0; s < possibilities.size(); s++) {
-                ColumnShift shift = possibilities.get(s);
-                CheeseGrid copygrid = new CheeseGrid(grid);
-                SimulationNode node = SimulationNode.analyzeShift(shift, copygrid, team);
-            }
+//            List<ColumnShift> possibilities = ComputerPlayer.getChoices(grid);
+//            for (int s = 0; s < possibilities.size(); s++) {
+//                ColumnShift shift = possibilities.get(s);
+//                CheeseGrid copygrid = new CheeseGrid(grid);
+//                SimulationNode node = SimulationNode.analyzeShift(shift, copygrid, team);
+//            }
             
         }
     }

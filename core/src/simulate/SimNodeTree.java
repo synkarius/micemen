@@ -25,8 +25,11 @@ public class SimNodeTree {
      * creates an unanalyzed SimulationNode with a copy of the grid passed in
      */
     protected static void fillLevel(List<SimulationNode> level, CheeseGrid grid, Team team, int depth) {
-        for (ColumnShift shift : ComputerPlayer.getChoices(grid))
+        for (ColumnShift shift : ComputerPlayer.getChoices(grid)) {
+            if (shift == null)
+                continue;
             level.add(new SimulationNode(shift, new CheeseGrid(grid), team, depth));
+        }
     }
     
     protected static void linkToParent(SimulationNode parent, List<SimulationNode> children) {

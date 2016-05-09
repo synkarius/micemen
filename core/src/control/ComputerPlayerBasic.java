@@ -30,6 +30,9 @@ public class ComputerPlayerBasic extends ComputerPlayer implements IController {
         // grid, team);
         
         for (ColumnShift choice : getChoices(grid)) {
+            if (choice == null)
+                continue;
+            
             SimulationNode result = SimulationNode.analyzeShift(choice, new CheeseGrid(grid), team);
             if (best == null || result.value() > best.value())
                 best = result;
