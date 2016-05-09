@@ -1,5 +1,13 @@
 package control;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import model.CheeseException;
 import model.CheeseGrid;
 import orders.ColumnShift;
@@ -10,10 +18,17 @@ import simulate.SimulationNode;
 
 public class ComputerPlayerBasic extends ComputerPlayer implements IController {
     
+    public ComputerPlayerBasic(ExecutorService pool) {
+        super(pool);
+    }
+    
     @Override
     public IOrder getOrder() throws CheeseException {
         
         SimulationNode best = null;
+        // List<SimulationNode> results = ComputerPlayer.splitAndBlock(pool, ,
+        // grid, team);
+        
         for (ColumnShift choice : getChoices(grid)) {
             SimulationNode result = SimulationNode.analyzeShift(choice, new CheeseGrid(grid), team);
             if (best == null || result.value() > best.value())
@@ -21,8 +36,6 @@ public class ComputerPlayerBasic extends ComputerPlayer implements IController {
         }
         
         if (best == null) {
-            if (this.isCPUvsCPUOpponent)
-                return null; // indicates that someone has won
             throw new CheeseException("No choices available.", grid);
         }
         
@@ -37,7 +50,7 @@ public class ComputerPlayerBasic extends ComputerPlayer implements IController {
     
     @Override
     public ComputerPlayer copy() {
-        ComputerPlayerBasic copy = new ComputerPlayerBasic();
+        ComputerPlayerBasic copy = new ComputerPlayerBasic(pool);
         copy.team = this.team;
         return copy;
     }

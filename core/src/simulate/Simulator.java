@@ -1,5 +1,7 @@
 package simulate;
 
+import java.util.concurrent.ExecutorService;
+
 import control.ComputerPlayer;
 import control.ComputerPlayerBasic;
 import control.IController;
@@ -14,7 +16,7 @@ import orders.OrderType;
 import orders.PassTurn;
 
 public class Simulator {
-    public static void simulate() throws CheeseException {
+    public static void simulate(ExecutorService pool) throws CheeseException {
         
         boolean playSingle = false;
         int games = playSingle ? 1 : 1000;
@@ -26,6 +28,7 @@ public class Simulator {
         int blueStartedAhead = 0;
         
         allGames: for (int i = 0; i < games; i++) {
+            
             CheeseGrid grid;
             if (playSingle) {
                 grid = Board.loadFromSave();
@@ -36,6 +39,7 @@ public class Simulator {
             }
             grid.ctrl().recalculateMoves();
             grid.ctrl().executeAll();
+            
             grid.recording().startRecording();
             
             Scores starting = GridController.scores(grid, true);
@@ -45,8 +49,8 @@ public class Simulator {
                 blueStartedAhead++;
             }
             
-            ComputerPlayer redController = new ComputerPlayerBasic().grid(grid).team(Team.RED);
-            ComputerPlayer blueController = new ComputerPlayerBasic().grid(grid).team(Team.BLUE);
+            ComputerPlayer redController = new ComputerPlayerBasic(pool).grid(grid).team(Team.RED);
+            ComputerPlayer blueController = new ComputerPlayerBasic(pool).grid(grid).team(Team.BLUE);
             int redScore = 0;
             int blueScore = 0;
             int moveCount = 0;

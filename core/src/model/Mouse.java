@@ -33,6 +33,8 @@ public class Mouse extends Block {
         
         MouseMove result = new MouseMove(this);
         while (true) {
+            int ox = x;
+            int oy = y;
             
             if (mustFall(grid, x, y)) {
                 y += 1;
@@ -48,8 +50,7 @@ public class Mouse extends Block {
             if (!grid.contains(x, y))
                 throw new CheeseException("Bad move detected.");
             
-            Block empty = grid.get(x, y);
-            grid.switcH(this, empty);
+            grid.switcH(ox, oy, x, y);
         }
         
         return result;

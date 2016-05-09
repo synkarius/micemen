@@ -36,6 +36,8 @@ public class MouseMove implements IOrder {
         
         if (applicableMouse == null || applicableMouse.gridID() != grid.id()) {
             applicableMouse = simMouse.getOriginal(grid.id());
+            
+            //java.lang.System.out.println("apm id: " + applicableMouse.gridID() + " sim id: " + simMouse.gridID());
             grid.state().anim().reset(applicableMouse);
         }
         
@@ -71,7 +73,7 @@ public class MouseMove implements IOrder {
                     grid.state().anim().walk(applicableMouse);
             }
             
-            grid.switcH(current, current.add(next));
+            grid.switcH(current, destination);
         }
         
         finished = !iter.hasNext();

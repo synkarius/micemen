@@ -1,5 +1,7 @@
 package control;
 
+import java.util.concurrent.ExecutorService;
+
 import model.CheeseException;
 import model.CheeseGrid;
 import model.Mouse.Team;
@@ -13,11 +15,14 @@ import simulate.SimulationNode;
 
 public class ComputerPlayerMid extends ComputerPlayerBasic {
     
-    private ComputerPlayer opponent  = new ComputerPlayerBasic();
-    private int            lookAhead = 2;
-    private SimNodeTree    tree;
+    private int         lookAhead = 2;
+    private SimNodeTree tree;
     /** true so makes 1st move */
-    private boolean        hasChosen = true;
+    private boolean     hasChosen = true;
+    
+    public ComputerPlayerMid(ExecutorService pool) {
+        super(pool);
+    }
     
     @Override
     public ComputerPlayer grid(CheeseGrid grid) {
@@ -37,13 +42,6 @@ public class ComputerPlayerMid extends ComputerPlayerBasic {
     
     private void makeTree() {
         this.tree = new SimNodeTree(grid, team, lookAhead);
-    }
-    
-    public ComputerPlayerMid opponent(ComputerPlayer opponent) {
-        this.opponent = opponent.copy();
-        if (this.opponent instanceof ComputerPlayerMid)
-            throw new CheeseException("Decision process for Mid vs Mid create infinite recursion.");
-        return this;
     }
     
     public ComputerPlayerMid lookAhead(int lookAhead) {
@@ -80,7 +78,7 @@ public class ComputerPlayerMid extends ComputerPlayerBasic {
     
     @Override
     public ComputerPlayer copy() {
-        ComputerPlayerMid copy = new ComputerPlayerMid();
+        ComputerPlayerMid copy = new ComputerPlayerMid(pool);
         copy.team = this.team;
         copy.lookAhead = this.lookAhead;
         return copy;

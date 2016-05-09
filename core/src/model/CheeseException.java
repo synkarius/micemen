@@ -6,6 +6,10 @@ public class CheeseException extends RuntimeException {
         super(string);
     }
     
+    public CheeseException(Exception e) {
+        super(e);
+    }
+    
     public CheeseException(String string, CheeseGrid grid) {
         super(string);
         java.lang.System.out.println(grid.recording().toString());

@@ -57,7 +57,10 @@ public class SimulationNode {
     /** NEW FOR ComputerPlayerMid: */
     
     public static SimulationNode analyzeShift(ColumnShift shift, CheeseGrid copygrid, Team team) {
-        return analyzeShift(shift, copygrid, team, 0);
+        // java.lang.System.out.println("- processing GID: " + copygrid.id());
+        SimulationNode result = analyzeShift(shift, copygrid, team, 0);
+        // java.lang.System.out.println("- finished GID: " + copygrid.id());
+        return result;
     }
     
     protected static SimulationNode analyzeShift(ColumnShift shift, CheeseGrid copygrid, Team team, int depth)

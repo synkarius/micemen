@@ -4,12 +4,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
-import gridparts.GridController.Scores;
 import model.Block;
+import model.CheeseException;
 import model.CheeseGrid;
 import model.Mouse.Team;
 import orders.ColumnShift;
+import simulate.SimulationNode;
 
 public abstract class ComputerPlayer implements IController {
     
@@ -30,11 +35,13 @@ public abstract class ComputerPlayer implements IController {
         };
     }
     
+    protected ExecutorService pool;
+    protected CheeseGrid      grid;
+    protected Team            team;
     
-    
-    protected CheeseGrid grid;
-    protected Team       team;
-    protected boolean    isCPUvsCPUOpponent;
+    public ComputerPlayer(ExecutorService pool) {
+        this.pool = pool;
+    }
     
     public ComputerPlayer grid(CheeseGrid grid) {
         this.grid = grid;
@@ -79,6 +86,39 @@ public abstract class ComputerPlayer implements IController {
             }
         }
         return Math.abs(max - min);
+    }
+    
+    public static List<SimulationNode> splitAndBlock(ExecutorService pool, List<ColumnShift> choices, CheeseGrid grid,
+            Team team) {
+        List<Future<SimulationNode>> futures = new ArrayList<>();
+        for (int c = 0; c < choices.size(); c++) {
+            ColumnShift choice = choices.get(c);
+            CheeseGrid copygrid = new CheeseGrid(grid);
+            final int c1 = c;
+            futures.add(pool.submit(new Callable<SimulationNode>() {
+                
+                @Override
+                public SimulationNode call() throws Exception {
+                    java.lang.System.out.println(" <> entering lambda for " + c1);
+                    SimulationNode result = SimulationNode.analyzeShift(choice, copygrid, team);
+                    java.lang.System.out.println(" <> exiting lambda for " + c1);
+                    return result;
+                }
+            }));
+        }
+        
+        List<SimulationNode> result = new ArrayList<>();
+        try {
+            for (int f = 0; f < futures.size(); f++) {
+                java.lang.System.out.println(" ~ ~ ~ getting future " + f);
+                Future<SimulationNode> future = futures.get(f);
+                result.add(future.get());
+                java.lang.System.out.println("~ ~ ~ got future " + f);
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            throw new CheeseException(e);
+        }
+        return result;
     }
     
     public abstract ComputerPlayer copy();

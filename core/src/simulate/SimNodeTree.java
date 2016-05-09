@@ -34,6 +34,8 @@ public class SimNodeTree {
             child.parent = parent;
     }
     
+    public boolean a;
+    
     public void doWork() {
         if (tops.isEmpty())
             fillLevel(tops, grid, team, depth);

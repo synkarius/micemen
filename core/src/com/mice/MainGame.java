@@ -1,5 +1,7 @@
 package com.mice;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,6 +36,7 @@ public class MainGame extends ApplicationAdapter {
     
     CheeseGrid                  grid;
     KeyboardController          input;
+    ExecutorService             pool;
     
     public void restart(CheeseGrid grid) {
         ControlMode mode;
@@ -46,7 +49,7 @@ public class MainGame extends ApplicationAdapter {
             this.grid = CheeseGrid.getNewDefault();
         }
         
-        this.input = new KeyboardController().setMode(mode).setGrid(this.grid).setRestart(this::restart);
+        this.input = new KeyboardController(pool).setMode(mode).setGrid(this.grid).setRestart(this::restart);
         this.grid.recording().startRecording();
         
         try {
@@ -72,6 +75,7 @@ public class MainGame extends ApplicationAdapter {
     public void create() {
         {
             /** libgdx screen setup */
+            pool = Executors.newFixedThreadPool(1);
             batch = new SpriteBatch();
             camera = new OrthographicCamera(SceneGraph.WIDTH, SceneGraph.HEIGHT);
             viewport = new FitViewport(SceneGraph.WIDTH, SceneGraph.HEIGHT, camera);

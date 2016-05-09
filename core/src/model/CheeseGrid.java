@@ -175,20 +175,16 @@ public class CheeseGrid {
         lastChosen = new SimulationNode(x, dir, 0);
     }
     
-    public void switcH(Block blockA, Block blockB) {
-        SimPoint a = get(blockA);
-        SimPoint b = get(blockB);
-        
-        grid[a.x()][a.y()] = blockB;
-        grid[b.x()][b.y()] = blockA;
+    public void switcH(SimPoint a, SimPoint b) {
+        switcH(a.x(), a.y(), b.x(), b.y());
     }
     
-    public void switcH(SimPoint a, SimPoint b) {
-        Block blockA = get(a.x(), a.y());
-        Block blockB = get(b.x(), b.y());
+    public void switcH(int ax, int ay, int bx, int by) {
+        Block blockA = get(ax, ay);
+        Block blockB = get(bx, by);
         
-        grid[a.x()][a.y()] = blockB;
-        grid[b.x()][b.y()] = blockA;
+        grid[ax][ay] = blockB;
+        grid[bx][by] = blockA;
     }
     
     /** for initial sets only -- no longer for updates */

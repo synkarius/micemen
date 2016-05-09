@@ -1,5 +1,7 @@
 package control;
 
+import java.util.concurrent.ExecutorService;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
@@ -26,11 +28,16 @@ public class KeyboardController implements IController {
         GAME, GAME_OVER
     }
     
-    private IController red;
-    private IController blue;
-    private CheeseGrid  grid;
-    private ControlMode mode;
-    private Restart     restart;
+    private IController     red;
+    private IController     blue;
+    private CheeseGrid      grid;
+    private ControlMode     mode;
+    private Restart         restart;
+    private ExecutorService pool;
+    
+    public KeyboardController(ExecutorService pool) {
+        this.pool = pool;
+    }
     
     public KeyboardController setRestart(Restart restart) {
         this.restart = restart;
@@ -90,13 +97,13 @@ public class KeyboardController implements IController {
     }
     
     public void loadOpponent() {
-        IController blue = grid.opponentWasCPU() ? new ComputerPlayerBasic().grid(grid).team(Team.BLUE) : this;
+        IController blue = grid.opponentWasCPU() ? new ComputerPlayerBasic(pool).grid(grid).team(Team.BLUE) : this;
         setControllers(this, blue);
     }
     
     public void processInput() throws CheeseException {
         if (Gdx.input.isKeyJustPressed(Input.Keys.F12)) {
-            Simulator.simulate();
+            Simulator.simulate(pool);
             
         } else if (Gdx.input.isKeyJustPressed(Input.Keys.F1)) {
             java.lang.System.out.println(grid.recording().toString());
@@ -113,12 +120,12 @@ public class KeyboardController implements IController {
                     setControllers(this, this);
                 } else if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
                     // cpu
-                    setControllers(this, new ComputerPlayerMid().grid(grid).team(Team.BLUE));
+                    setControllers(this, new ComputerPlayerMid(pool).grid(grid).team(Team.BLUE));
                     choseCPU = true;
                 } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
                     // cpu vs cpu
-                    setControllers(new ComputerPlayerBasic().grid(grid).team(Team.RED),
-                            new ComputerPlayerMid().grid(grid).team(Team.BLUE));
+                    setControllers(new ComputerPlayerBasic(pool).grid(grid).team(Team.RED),
+                            new ComputerPlayerMid(pool).grid(grid).team(Team.BLUE));
                 }
                 if (controllersAreSetUp()) {
                     if (choseCPU) {
