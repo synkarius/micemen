@@ -63,7 +63,7 @@ public class CheeseGrid {
             for (int y = 0; y < height(); y++) {
                 Block oldBlock = grid.get(x, y);
                 if (oldBlock.type() == Type.MOUSE) {
-                    set(x, y, new Mouse((Mouse) oldBlock, this));
+                    set(x, y, new Mouse(((Mouse) oldBlock).team, this));
                 } else if (oldBlock.type() == Type.CHEESE) {
                     set(x, y, new CheeseBlock(this));
                 } else if (oldBlock.type() == Type.EMPTY) {
@@ -176,7 +176,7 @@ public class CheeseGrid {
     }
     
     public void switcH(SimPoint a, SimPoint b) {
-        switcH(a.x(), a.y(), b.x(), b.y());
+        switcH(a.x, a.y, b.x, b.y);
     }
     
     public void switcH(int ax, int ay, int bx, int by) {
@@ -204,7 +204,7 @@ public class CheeseGrid {
     }
     
     public boolean contains(SimPoint pt) {
-        return contains(pt.x(), pt.y());
+        return contains(pt.x, pt.y);
     }
     
     public List<Block> column(int x) {

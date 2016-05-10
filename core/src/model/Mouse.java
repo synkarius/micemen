@@ -9,17 +9,11 @@ public class Mouse extends Block {
     }
     
     protected Team team;
-    private Mouse  parent;
     
     public Mouse(Team team, CheeseGrid grid) {
         super(grid);
         this.type = Type.MOUSE;
         this.team = team;
-    }
-    
-    public Mouse(Mouse parent, CheeseGrid grid) {
-        this(parent.team, grid);
-        this.parent = parent;
     }
     
     public Team team() {
@@ -28,10 +22,10 @@ public class Mouse extends Block {
     
     public MouseMove getMoves(CheeseGrid grid, boolean fallsOnly) throws CheeseException {
         SimPoint origin = grid.get(this);
-        int x = origin.x();
-        int y = origin.y();
+        int x = origin.x;
+        int y = origin.y;
         
-        MouseMove result = new MouseMove(this);
+        MouseMove result = new MouseMove(this, x, y);
         while (true) {
             int ox = x;
             int oy = y;
@@ -72,18 +66,5 @@ public class Mouse extends Block {
         if (newX < 0 || newX > grid.wMax())
             return false;
         return grid.get(newX, y).isEmpty();
-    }
-    
-    public Mouse getOriginal(int gridID) {
-        if (this.gridID != gridID)
-            return parent.getOriginal(gridID);
-        return this;
-    }
-    
-    /**
-     * To help the CPU use the right mouse.
-     */
-    public void nullifyParentLinks() {
-        parent = null;
     }
 }

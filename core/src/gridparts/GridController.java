@@ -136,7 +136,7 @@ public class GridController {
             Block empty = emptyBlocks.get(i);
             SimPoint esp = grid.get(empty);
             
-            grid.fillVacancy(esp.x(), esp.y(), team);
+            grid.fillVacancy(esp.x, esp.y, team);
         }
     }
     
@@ -294,8 +294,8 @@ public class GridController {
             Mouse mouse = miceIter.next();
             MouseMove move = mouse.getMoves(copygrid, fallsOnly);
             SimPoint total = move.consolidate();
-            int totalX = Math.abs(total.x());
-            int totalY = Math.abs(total.y());
+            int totalX = Math.abs(total.x);
+            int totalY = Math.abs(total.y);
             
             if (fallsOnly) {
                 if (totalX == 0 && totalY > 0)

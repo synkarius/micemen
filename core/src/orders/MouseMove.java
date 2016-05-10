@@ -21,7 +21,12 @@ public class MouseMove implements IOrder {
     private int                  counter;
     boolean                      finished;
     
-    public MouseMove(Mouse simMouse) {
+    private final int            ox;
+    private final int            oy;
+    
+    public MouseMove(Mouse simMouse, int x, int y) {
+        this.ox = x;
+        this.oy = y;
         this.simMouse = simMouse;
         this.moves = new ArrayList<>();
     }
@@ -35,9 +40,9 @@ public class MouseMove implements IOrder {
             iter = moves.iterator();
         
         if (applicableMouse == null || applicableMouse.gridID() != grid.id()) {
-            applicableMouse = simMouse.getOriginal(grid.id());
+            // applicableMouse = simMouse.getOriginal(grid.id());
+            applicableMouse = (Mouse) grid.get(ox, oy);
             
-            //java.lang.System.out.println("apm id: " + applicableMouse.gridID() + " sim id: " + simMouse.gridID());
             grid.state().anim().reset(applicableMouse);
         }
         
@@ -58,16 +63,15 @@ public class MouseMove implements IOrder {
             SimPoint next = iter.next();
             SimPoint destination = current.add(next);
             
-            grid.recording().addMove(applicableMouse.team(), current.x(), current.y(), destination.x(),
-                    destination.y());
+            grid.recording().addMove(applicableMouse.team(), current.x, current.y, destination.x, destination.y);
             
             if (grid.isGraphical()) {
-                if (next.x() != 0)
+                if (next.x != 0)
                     Resource.lo2.play();
-                else if (next.y() != 0)
+                else if (next.y != 0)
                     Resource.lo.play();
                 
-                if (destination.x() == 0 || destination.x() == grid.wMax())
+                if (destination.x == 0 || destination.x == grid.wMax())
                     applicableMouse.graphic(Graphic.UMBRELLA);
                 else
                     grid.state().anim().walk(applicableMouse);

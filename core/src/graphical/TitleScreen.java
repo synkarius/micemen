@@ -64,8 +64,8 @@ public class TitleScreen {
         }
         
         for (SimPoint c : cheese)
-            batch.draw(Resource.cheese, c.x() * SceneGraph.BLOCK_SIZE + SceneGraph.X_OFFSET,
-                    c.y() * SceneGraph.BLOCK_SIZE + SceneGraph.Y_OFFSET);
+            batch.draw(Resource.cheese, c.x * SceneGraph.BLOCK_SIZE + SceneGraph.X_OFFSET,
+                    c.y * SceneGraph.BLOCK_SIZE + SceneGraph.Y_OFFSET);
         
         for (TitleMouse mouse : mice) {
             mouse.play(frame);

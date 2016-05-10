@@ -89,9 +89,9 @@ public class SceneGraph {
      * @param escapee
      */
     public static void drawEscapee(SpriteBatch batch, SimPoint escapee) {
-        int x = escapee.x() * SceneGraph.BLOCK_SIZE + SceneGraph.X_OFFSET;
-        TextureRegion fall = escapee.x() != 0 ? Graphic.FALL.red() : Graphic.FALL.blue();
-        batch.draw(fall, x, escapee.y());
+        int x = escapee.x * SceneGraph.BLOCK_SIZE + SceneGraph.X_OFFSET;
+        TextureRegion fall = escapee.x != 0 ? Graphic.FALL.red() : Graphic.FALL.blue();
+        batch.draw(fall, x, escapee.y);
     }
     
     public static void drawBoxes(ShapeRenderer shaper) {

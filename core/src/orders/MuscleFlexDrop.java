@@ -64,7 +64,9 @@ public class MuscleFlexDrop implements IOrder {
         
         if (!setup) {
             Team team = mouse.team();
-            mouse = mouse.getOriginal(grid.id());
+            int x = team == Team.RED ? grid.wMax() : 0;
+            int y = grid.hMax();
+            mouse = (Mouse) grid.get(x, y);
             int score = grid.ctrl().score(team);
             flashy = score == grid.micePerTeam() - 1;
             mouse.graphic(!flashy ? Graphic.FACE_CAMERA : Graphic.MUSCLE1);
