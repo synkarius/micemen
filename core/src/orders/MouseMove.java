@@ -39,11 +39,10 @@ public class MouseMove implements IOrder {
         if (iter == null)
             iter = moves.iterator();
         
-        if (applicableMouse == null || applicableMouse.gridID() != grid.id()) {
-            // applicableMouse = simMouse.getOriginal(grid.id());
+        if (applicableMouse == null) {
             applicableMouse = (Mouse) grid.get(ox, oy);
-            
-            grid.state().anim().reset(applicableMouse);
+            if (grid.isGraphical())
+                grid.state().anim().reset(applicableMouse);
         }
         
         if (grid.isGraphical()) {

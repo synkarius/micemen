@@ -43,12 +43,11 @@ public class CheeseGrid {
      */
     public CheeseGrid(int width, int height, int micePerTeam) {
         this.grid = new Block[width][height];
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                this.grid[x][y] = null;
-            }
-        }
-        // this.cache = new HashMap<>();
+        // for (int x = 0; x < width; x++) {
+        // for (int y = 0; y < height; y++) {
+        // this.grid[x][y] = null;
+        // }
+        // }
         this.poles = new boolean[width];
         this.micePerTeam = micePerTeam;
         this.ctrl = new GridController(this);
@@ -59,20 +58,9 @@ public class CheeseGrid {
     
     public CheeseGrid(CheeseGrid grid) throws CheeseException {
         this(grid.width(), grid.height(), grid.micePerTeam());
-        for (int x = 0; x < width(); x++) {
-            for (int y = 0; y < height(); y++) {
-                Block oldBlock = grid.get(x, y);
-                if (oldBlock.type() == Type.MOUSE) {
-                    set(x, y, new Mouse(((Mouse) oldBlock).team, this));
-                } else if (oldBlock.type() == Type.CHEESE) {
-                    set(x, y, new CheeseBlock(this));
-                } else if (oldBlock.type() == Type.EMPTY) {
-                    set(x, y, new EmptyBlock(this));
-                }
-            }
-        }
-        for (int b = 0; b < poles.length; b++)
-            poles[b] = grid.poles[b];
+        for (int x = 0; x < width(); x++)
+            this.grid[x] = grid.grid[x].clone();
+        this.poles = grid.poles.clone();
         this.activeTeam = grid.activeTeam();
     }
     
