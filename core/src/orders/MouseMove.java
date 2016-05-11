@@ -14,7 +14,6 @@ public class MouseMove implements IOrder {
     
     private static final int     DELAY = 20;
     
-    private final Mouse          simMouse;
     private Mouse                applicableMouse;
     private final List<SimPoint> moves;
     private Iterator<SimPoint>   iter;
@@ -24,10 +23,9 @@ public class MouseMove implements IOrder {
     private final int            ox;
     private final int            oy;
     
-    public MouseMove(Mouse simMouse, int x, int y) {
-        this.ox = x;
-        this.oy = y;
-        this.simMouse = simMouse;
+    public MouseMove(int ox, int oy) {
+        this.ox = ox;
+        this.oy = oy;
         this.moves = new ArrayList<>();
     }
     

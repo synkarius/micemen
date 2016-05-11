@@ -292,7 +292,7 @@ public class GridController {
         
         while (miceIter.hasNext()) {
             Mouse mouse = miceIter.next();
-            MouseMove move = mouse.getMoves(copygrid, fallsOnly);
+            MouseMove move = getMoves(mouse, copygrid, fallsOnly);
             SimPoint total = move.consolidate();
             int totalX = Math.abs(total.x);
             int totalY = Math.abs(total.y);
@@ -346,6 +346,57 @@ public class GridController {
         order.execute(grid);
         if (order.finished())
             orders.remove(order);
+    }
+    
+    /////////////////////////// MOUSE MOVES SECTION //////////////////////////////
+    // Originally in Mouse.java
+    
+    public static MouseMove getMoves(Mouse mouse, CheeseGrid grid, boolean fallsOnly) throws CheeseException {
+        SimPoint origin = grid.get(mouse);
+        int x = origin.x;
+        int y = origin.y;
+        
+        MouseMove result = new MouseMove(x, y);
+        while (true) {
+            int ox = x;
+            int oy = y;
+            
+            if (mustFall(grid, x, y)) {
+                y += 1;
+                result.add(0, 1);
+            } else if (canMove(grid, x, y, mouse.team()) && !fallsOnly) {
+                int dir = walkingDir(mouse.team());
+                x += dir;
+                result.add(dir, 0);
+            } else {
+                break;
+            }
+            
+            if (!grid.contains(x, y))
+                throw new CheeseException("Bad move detected.");
+            
+            grid.switcH(ox, oy, x, y);
+        }
+        
+        return result;
+    }
+    
+    private static int walkingDir(Team team) {
+        return team == Team.RED ? 1 : -1;
+    }
+    
+    private static boolean mustFall(CheeseGrid grid, int x, int y) {
+        if (y + 1 > grid.hMax())
+            return false;
+        return grid.get(x, y + 1).isEmpty();
+    }
+    
+    private static boolean canMove(CheeseGrid grid, int x, int y, Team team) {
+        int dir = walkingDir(team);
+        int newX = x + dir;
+        if (newX < 0 || newX > grid.wMax())
+            return false;
+        return grid.get(newX, y).isEmpty();
     }
     
 }
