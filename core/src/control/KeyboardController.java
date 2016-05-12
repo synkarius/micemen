@@ -1,10 +1,12 @@
 package control;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
+import data.DataAccessor;
 import file.Board;
 import gridparts.GridController;
 import gridparts.GridController.Scores;
@@ -33,10 +35,13 @@ public class KeyboardController implements IController {
     private CheeseGrid      grid;
     private ControlMode     mode;
     private Restart         restart;
-    private ExecutorService pool;
     
-    public KeyboardController(ExecutorService pool) {
+    private ExecutorService pool;
+    private DataAccessor    dao;
+    
+    public KeyboardController(ExecutorService pool, DataAccessor dao) {
         this.pool = pool;
+        this.dao = dao;
     }
     
     public KeyboardController setRestart(Restart restart) {
@@ -179,6 +184,11 @@ public class KeyboardController implements IController {
                         this.restart.action(load);
                     }
                 } else if (mode == ControlMode.CONFIRM_QUIT) {
+                    try {
+                        dao.dump();
+                    } catch (IOException e) {
+                        throw new CheeseException(e);
+                    }
                     System.exit(0);
                 }
                 mode = ControlMode.GAME;
@@ -214,6 +224,11 @@ public class KeyboardController implements IController {
                 } else {
                     IOrder move = grid.activeTeam() == Team.RED ? red.getOrder() : blue.getOrder();
                     if (move != null) {
+                        String board = Board.getBoardString(grid, false).trim();
+                        Integer value = dao.valueOf(board);
+                        if (value != null)
+                            dao.insert(board, value);
+                        
                         grid.ctrl().orders().add(move);
                     } else {
                         grid.state().randomMouseEatsCheese();

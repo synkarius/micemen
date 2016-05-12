@@ -3,7 +3,6 @@ package simulate;
 import java.util.ArrayList;
 import java.util.List;
 
-import control.ComputerPlayer;
 import control.Direction;
 import gridparts.GridController;
 import gridparts.GridController.Scores;
@@ -18,7 +17,7 @@ public class SimulationNode {
     private CheeseGrid           grid;
     /** does not alternate, only used for scoring */
     private Team                 team;
-    private boolean              analyzed;
+    public boolean               analyzed;
     public SimulationNode        parent;
     private List<SimulationNode> children;
     private int                  depth;
@@ -55,6 +54,10 @@ public class SimulationNode {
     }
     
     /** NEW FOR ComputerPlayerMid: */
+    
+    public CheeseGrid grid() {
+        return grid;
+    }
     
     public static SimulationNode analyzeShift(ColumnShift shift, CheeseGrid copygrid, Team team) {
         // java.lang.System.out.println("- processing GID: " + copygrid.id());

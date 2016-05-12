@@ -28,8 +28,12 @@ public class Board {
         return Paths.get("mice.txt").toAbsolutePath();
     }
     
+    public static String timestamp() {
+        return new Date().toString().replace(':', ' ');
+    }
+    
     private static Path oldSavePath() {
-        return Paths.get(new Date().toString().replace(':', ' ') + ".oldsave").toAbsolutePath();
+        return Paths.get(timestamp() + ".oldsave").toAbsolutePath();
     }
     
     public static String getBoardString(CheeseGrid grid) {

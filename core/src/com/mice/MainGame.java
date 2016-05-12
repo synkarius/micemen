@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import control.KeyboardController;
 import control.KeyboardController.ControlMode;
+import data.DataAccessor;
 import graphical.Resource;
 import graphical.SceneGraph;
 import graphical.TitleScreen;
@@ -36,6 +37,8 @@ public class MainGame extends ApplicationAdapter {
     
     CheeseGrid                  grid;
     KeyboardController          input;
+    
+    DataAccessor                dao;
     ExecutorService             pool;
     
     public void restart(CheeseGrid grid) {
@@ -49,7 +52,7 @@ public class MainGame extends ApplicationAdapter {
             this.grid = CheeseGrid.getNewDefault();
         }
         
-        this.input = new KeyboardController(pool).setMode(mode).setGrid(this.grid).setRestart(this::restart);
+        this.input = new KeyboardController(pool, dao).setMode(mode).setGrid(this.grid).setRestart(this::restart);
         this.grid.recording().startRecording();
         
         try {
@@ -86,8 +89,14 @@ public class MainGame extends ApplicationAdapter {
             font.setColor(Color.WHITE);
         }
         
+        dao = new DataAccessor();
+        dao.create();
+        
+        
         Restart restart = this::restart;
         restart.action(null);
+        
+        
     }
     
     @Override

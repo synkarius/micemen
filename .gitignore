@@ -2,8 +2,8 @@
 .project
 .settings
 *.class
-
-
+*.db
+mouse_dump.txt
 *.oldsave
 *.log
 mice.txt
