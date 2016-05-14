@@ -26,17 +26,21 @@ public class ComputerPlayerBasic extends ComputerPlayer implements IController {
     public IOrder getOrder() throws CheeseException {
         
         SimulationNode best = null;
-        // List<SimulationNode> results = ComputerPlayer.splitAndBlock(pool, ,
-        // grid, team);
-        
-        for (ColumnShift choice : getChoices(grid)) {
-            if (choice == null)
-                continue;
-            
-            SimulationNode result = SimulationNode.analyzeShift(choice, new CheeseGrid(grid), team);
+        List<SimulationNode> results = ComputerPlayer.splitAndBlock(pool, getChoices(grid), grid, team);
+        for (SimulationNode result : results) {
             if (best == null || result.value() > best.value())
                 best = result;
         }
+        
+        // for (ColumnShift choice : getChoices(grid)) {
+        // if (choice == null)
+        // continue;
+        //
+        // SimulationNode result = SimulationNode.analyzeShift(choice, new
+        // CheeseGrid(grid), team);
+        // if (best == null || result.value() > best.value())
+        // best = result;
+        // }
         
         if (best == null) {
             throw new CheeseException("No choices available.", grid);

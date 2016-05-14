@@ -106,20 +106,24 @@ public abstract class ComputerPlayer implements IController {
         return Math.abs(max - min);
     }
     
-    public static List<SimulationNode> splitAndBlock(ExecutorService pool, List<ColumnShift> choices, CheeseGrid grid,
+    public static List<SimulationNode> splitAndBlock(ExecutorService pool, ColumnShift[] columnShifts, CheeseGrid grid,
             Team team) {
         List<Future<SimulationNode>> futures = new ArrayList<>();
-        for (int c = 0; c < choices.size(); c++) {
-            ColumnShift choice = choices.get(c);
+        for (int c = 0; c < columnShifts.length; c++) {
+            if (columnShifts[c] == null)
+                continue;
+            ColumnShift choice = columnShifts[c];
             CheeseGrid copygrid = new CheeseGrid(grid);
             final int c1 = c;
             futures.add(pool.submit(new Callable<SimulationNode>() {
                 
                 @Override
                 public SimulationNode call() throws Exception {
-                    java.lang.System.out.println(" <> entering lambda for " + c1);
+                    // java.lang.System.out.println(" <> entering lambda for " +
+                    // c1);
                     SimulationNode result = SimulationNode.analyzeShift(choice, copygrid, team);
-                    java.lang.System.out.println(" <> exiting lambda for " + c1);
+                    // java.lang.System.out.println(" <> exiting lambda for " +
+                    // c1);
                     return result;
                 }
             }));
@@ -128,10 +132,10 @@ public abstract class ComputerPlayer implements IController {
         List<SimulationNode> result = new ArrayList<>();
         try {
             for (int f = 0; f < futures.size(); f++) {
-                java.lang.System.out.println(" ~ ~ ~ getting future " + f);
+                // java.lang.System.out.println(" ~ ~ ~ getting future " + f);
                 Future<SimulationNode> future = futures.get(f);
                 result.add(future.get());
-                java.lang.System.out.println("~ ~ ~ got future " + f);
+                // java.lang.System.out.println("~ ~ ~ got future " + f);
             }
         } catch (ExecutionException | InterruptedException e) {
             throw new CheeseException(e);
