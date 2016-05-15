@@ -4,6 +4,7 @@ import java.util.concurrent.ExecutorService;
 
 import control.ComputerPlayer;
 import control.ComputerPlayerBasic;
+import control.ComputerPlayerMid2;
 import control.IController;
 import file.Board;
 import gridparts.GridController;
@@ -50,7 +51,7 @@ public class Simulator {
             }
             
             ComputerPlayer redController = new ComputerPlayerBasic(pool).grid(grid).team(Team.RED);
-            ComputerPlayer blueController = new ComputerPlayerBasic(pool).grid(grid).team(Team.BLUE);
+            ComputerPlayer blueController = new ComputerPlayerMid2(pool).grid(grid).team(Team.BLUE);
             int redScore = 0;
             int blueScore = 0;
             int moveCount = 0;

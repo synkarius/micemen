@@ -11,6 +11,8 @@ import model.CheeseException;
 import model.CheeseGrid;
 import model.Mouse.Team;
 import orders.ColumnShift;
+import orders.IOrder;
+import orders.Progress;
 import util.Util;
 
 public class SimFlatTree {
@@ -50,10 +52,10 @@ public class SimFlatTree {
     private final Team                    opponent;
     
     // used for readiness indicator bar
-    private int                           count;
     private double                        total;
     private int                           currentDepth;
     private final List<Future<?>>         work;
+    private Task                          nextTask   = Task.SETUP;
     
     enum Task {
         /** run a ColumnShift and score the board */
@@ -63,9 +65,9 @@ public class SimFlatTree {
         /** wipe out a level */
         WIPE,
         /** create children level for a level */
-        FILL,
-        /** replace a parent level with a section of a child level */
-        PROMOTE
+        SETUP// ,
+        // /** replace a parent level with a section of a child level */
+        // PROMOTE
     }
     
     public SimFlatTree(ExecutorService pool, CheeseGrid grid, Team team, int maxDepth) {
@@ -83,24 +85,27 @@ public class SimFlatTree {
      * @param task
      * @param depth
      */
-    public SimulationNode execute(Task task, int depth, int chosen) {
-        if (depth > 4)
+    private SimulationNode execute(Task task, int depth, int chosen) {
+        if (depth > LVLS.length - 1)
             throw new CheeseException("Bad depth.");
-        if (depth == 4 && task == Task.FILL)
-            throw new CheeseException("Bad depth (Task.FILL) -- end level doesn't get children");
+   
+        
+        /** the SETUP section assumes we're on the parent level */
+        if (task == Task.SETUP)
+            depth -= 1;
         
         SimulationNode[] all = LVLS[depth];
-        int increment = INCREMENTS[depth];
+        // int increment = INCREMENTS[depth];
         SimulationNode best = null;
         
         int i = 0;
         int max = all.length;
-        // 'p' used for promote task -- avoids needing modulo
-        int p = 0;
-        if (task == Task.PROMOTE) {
-            i = chosen * increment;
-            max = i + increment;
-        }
+        // // 'p' used for promote task -- avoids needing modulo
+        // int p = 0;
+        // if (task == Task.PROMOTE) {
+        // i = chosen * increment;
+        // max = i + increment;
+        // }
         
         loop: for (; i < max; i++) {
             
@@ -128,9 +133,10 @@ public class SimFlatTree {
                 // continue loop;
                 // SimulationNode.analyzeShift(all[i]);
                 // return all[i];
-            } else if (task == Task.FILL) {
-                if (all[i] == null && depth != 0)
+            } else if (task == Task.SETUP) {
+                if (all[i] == null)
                     continue;
+                
                 // 0-depth choices will be set up in another method
                 CheeseGrid grid = all[i].grid();
                 ColumnShift[] choices = ComputerPlayer.getChoices(grid);
@@ -146,15 +152,16 @@ public class SimFlatTree {
                     SimulationNode child = new SimulationNode(choices[k], new CheeseGrid(grid), team, depth);
                     childrenLevel[childStartIndex + k] = child;
                 }
-            } else if (task == Task.PROMOTE) {
-                // will only promote chosen children
-                // due to altered loop indices
-                // -- we DO want to promote nulls
-                int parentIndex = p++;
-                SimulationNode[] parentLevel = LVLS[depth - 1];
-                
-                parentLevel[parentIndex] = all[i];
             }
+            // else if (task == Task.PROMOTE) {
+            // // will only promote chosen children
+            // // due to altered loop indices
+            // // -- we DO want to promote nulls
+            // int parentIndex = p++;
+            // SimulationNode[] parentLevel = LVLS[depth - 1];
+            //
+            // parentLevel[parentIndex] = all[i];
+            // }
             
         }
         
@@ -165,46 +172,79 @@ public class SimFlatTree {
         return work.isEmpty() && currentDepth >= maxDepth;
     }
     
-    public SimulationNode getBestWeightedFuture() {
-        // TODO Auto-generated method stub
-        return null;
+    public void clear() {
+        for (int i = 0; i < LVLS.length; i++)
+            execute(Task.WIPE, i);
+        nextTask = Task.SETUP;
+        currentDepth = 0;
     }
     
-    public void prune(int choice, boolean reset) {
-        // TODO
-        // if (tops.isEmpty())
-        // return;
-        // SimulationNode chosen = null;
-        // for (SimulationNode node : tops) {
-        // if (node.x() == choice.x() && node.dir() == choice.dir()) {
-        // chosen = node;
-        // break;
-        // }
-        // }
-        // this.tops = chosen.children();
-        // if (reset) {
-        // for (SimulationNode node : this.tops) {
-        // node.reset(depth);
-        // SimulationNode.setupChildren(node);
-        // }
-        // }
+    public SimulationNode getBestFuture() {
+        int[] score = new int[MAX_CH];
+        int[] count = new int[MAX_CH];
+        SimulationNode[] level = LVLS[maxDepth];
+        int increment = INCREMENTS[maxDepth - 1];
         
+        // sum the future values of the children
+        for (int i = 0; i < level.length; i++) {
+            if (level[i] == null)
+                continue;
+            int parentIndex = i / increment;
+            score[parentIndex] += level[i].value();
+            count[parentIndex]++;
+        }
+        
+        // determine the best choice
+        Integer best = null;
+        for (int j = 0; j < score.length; j++) {
+            if (LVLS[0][j] == null)
+                continue;
+            
+            // get average
+            score[j] /= count[j];
+            
+            if (best == null || score[best] < score[j]) 
+                best = j;
+            
+        }
+        
+        return LVLS[0][best];
     }
     
-    public int readyNodes() {
-        return count;
+    /** cycles between SETUP and ANALYZE */
+    public IOrder process() {
+        // clear finished tasks
+        work.removeIf(future -> future.isDone());
+        // wait until everything is complete
+        if (!work.isEmpty())
+            return waiT();
+        
+        // if done analyzing, but thread slightly late, do nothing
+        if (currentDepth > maxDepth)
+            return waiT();
+        
+        // if there's no work processing, setup for analysis
+        if (currentDepth == 0)
+            fillTop();
+        else
+            execute(Task.SETUP, currentDepth);
+        
+        // setup multithreaded analysis
+        execute(Task.ANALYZE, currentDepth);
+        total = work.size();
+        
+        // bump level
+        currentDepth++;
+        
+        return waiT();
     }
     
-    public double totalNodes() {
-        return total;
+    private IOrder waiT() {
+        return new Progress(total - work.size(), total);
     }
     
-    public void doWqwdqwdork() {
-        // TODO: multithread it such that you create ALL jobs for a given level
-        // in one frame,
-        // then every frame, check to see if all the futures are done, and then
-        // proceed
-        // to either make a decision or repeat for the next depth
+    private void fillTop() {
+        // handle first level being empty
         if (Arrays.equals(LVLS[0], EMPTY_TOP)) {
             ColumnShift choices[] = ComputerPlayer.getChoices(grid);
             for (int i = 0; i < MAX_CH; i++) {
@@ -214,17 +254,6 @@ public class SimFlatTree {
                     LVLS[0][i] = new SimulationNode(choices[i], new CheeseGrid(grid), team, 0);
             }
         }
-        if (currentDepth < maxDepth) {
-            execute(Task.ANALYZE, currentDepth);
-            total = work.size();
-        }
-        
-        // for (SimulationNode node : tops) {
-        // boolean analyzed = SimulationNode.analyzeNextUnanalyzed(node);
-        // if (analyzed)
-        // return;
-        // }
-        
     }
     
     /**
@@ -233,5 +262,28 @@ public class SimFlatTree {
      */
     public SimulationNode execute(Task task, int depth) {
         return execute(task, depth, 0);
+    }
+    
+    /**
+     * only useful if the tree has a memory -- fuck this, the gains are marginal
+     * compared to the complications added
+     */
+    public void prune(SimulationNode choice, boolean reset) {
+        //
+        // int chosen = -1;
+        // for (int i = 0; i < MAX_CH; i++) {
+        // if (LVLS[0][i] == null)
+        // continue;
+        // if (LVLS[0][i].x() == choice.x() && LVLS[0][i].dir() == choice.dir())
+        // {
+        // chosen = i;
+        // break;
+        // }
+        // }
+        //
+        // if (chosen == -1)
+        // throw new CheeseException("Failed to find chosen node.");
+        //
+        // execute(Task.PROMOTE, 0, chosen);
     }
 }

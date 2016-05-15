@@ -5,12 +5,12 @@ import model.CheeseGrid;
 
 public class Progress implements IOrder {
     
-    private int    ready;
+    private double    ready;
     /** total=0 indicates reset the menu state */
     private double total;
     
     /** draws a progress bar on the screen */
-    public Progress(int ready, double total) {
+    public Progress(double ready, double total) {
         this.ready = ready;
         this.total = total;
     }

@@ -32,6 +32,7 @@ public class KeyboardController implements IController {
     
     private IController     red;
     private IController     blue;
+    private Boolean         choseCPUOpponent;
     private CheeseGrid      grid;
     private ControlMode     mode;
     private Restart         restart;
@@ -60,10 +61,8 @@ public class KeyboardController implements IController {
     }
     
     public KeyboardController setControllers(IController red, IController blue) {
-        if (!controllersAreSetUp()) {
-            this.red = red;
-            this.blue = blue;
-        }
+        this.red = red;
+        this.blue = blue;
         return this;
     }
     
@@ -93,7 +92,7 @@ public class KeyboardController implements IController {
     }
     
     private boolean controllersAreSetUp() {
-        return red != null && blue != null;
+        return choseCPUOpponent != null;
     }
     
     private boolean isMenuConfirm() {
@@ -118,22 +117,22 @@ public class KeyboardController implements IController {
             
             // CHOOSE OPPONENT
             if (!controllersAreSetUp()) {
-                boolean choseCPU = false;
                 
                 if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
                     // human
                     setControllers(this, this);
+                    choseCPUOpponent = false;
                 } else if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
                     // cpu
-                    setControllers(this, new ComputerPlayerMid(pool).grid(grid).team(Team.BLUE));
-                    choseCPU = true;
+                    choseCPUOpponent = true;
                 } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
                     // cpu vs cpu
                     setControllers(new ComputerPlayerBasic(pool).grid(grid).team(Team.RED),
-                            new ComputerPlayerMid(pool).grid(grid).team(Team.BLUE));
+                            new ComputerPlayerMid2(pool).lookAhead(4).grid(grid).team(Team.BLUE));
+                    choseCPUOpponent = false;
                 }
                 if (controllersAreSetUp()) {
-                    if (choseCPU) {
+                    if (choseCPUOpponent) {
                         mode = ControlMode.CHOOSE_DIFFICULTY;
                         grid.state().menu().chooseDifficulty();
                     } else {
@@ -142,23 +141,18 @@ public class KeyboardController implements IController {
                 }
             } else {
                 // CHOOSE DIFFICULTY OR START
-                
                 boolean chose = false;
                 
-                // TODO: actual difficulty differences
-                int lookAhead = 1; // really 0
                 if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
                     chose = true;
-                    lookAhead = 4;
+                    setControllers(this, new ComputerPlayerMid2(pool).lookAhead(4).grid(grid).team(Team.BLUE));
                 } else if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
                     chose = true;
-                    lookAhead = 2;
+                    setControllers(this, new ComputerPlayerMid2(pool).lookAhead(2).grid(grid).team(Team.BLUE));
                 } else if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+                    setControllers(this, new ComputerPlayerBasic(pool).grid(grid).team(Team.BLUE));
                     chose = true;
                 }
-                
-                // if (blue instanceof ComputerPlayerMid)
-                // ((ComputerPlayerMid) blue).lookAhead(lookAhead);
                 
                 if (chose)
                     startGame(null);

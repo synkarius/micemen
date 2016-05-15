@@ -78,7 +78,7 @@ public class MainGame extends ApplicationAdapter {
     public void create() {
         {
             /** libgdx screen setup */
-            pool = Executors.newFixedThreadPool(25);
+            pool = Executors.newFixedThreadPool(40);
             batch = new SpriteBatch();
             camera = new OrthographicCamera(SceneGraph.WIDTH, SceneGraph.HEIGHT);
             viewport = new FitViewport(SceneGraph.WIDTH, SceneGraph.HEIGHT, camera);
