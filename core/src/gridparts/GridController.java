@@ -45,7 +45,7 @@ public class GridController {
                 Arrays.asList(false, true, true, false, true, true, false, true, true, false, true, true, false));
         PLACEMENT.put(20, empty);
     }
-    private static final List<Integer> VERBOTEN       = Arrays.asList(0, 1, 8, 9, 10, 11, 12, 19, 20);
+    private static final List<Integer> VERBOTEN       = Arrays.asList(0, 8, 9, 10, 11, 12, 20);
     private static final int           CHEESE_WALL    = 7;
     
     private static final int           BLUE_OFFSET    = 1;
@@ -145,7 +145,6 @@ public class GridController {
             Scores eval = scores(grid, true);
             int red = eval.redBoardValue;
             int blue = eval.blueBoardValue;
-            
             
             if (red > blue) {
                 grid.state().menu().boardFavor(Team.RED, red - blue);
@@ -348,7 +347,8 @@ public class GridController {
             orders.remove(order);
     }
     
-    /////////////////////////// MOUSE MOVES SECTION //////////////////////////////
+    /////////////////////////// MOUSE MOVES SECTION
+    /////////////////////////// //////////////////////////////
     // Originally in Mouse.java
     
     public static MouseMove getMoves(Mouse mouse, CheeseGrid grid, boolean fallsOnly) throws CheeseException {
