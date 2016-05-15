@@ -136,7 +136,7 @@ public class KeyboardController implements IController {
                 } else if (Gdx.input.isKeyJustPressed(Input.Keys.C)) {
                     // cpu
                     choseCPUOpponent = true;
-                } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+                } else if (Gdx.input.isKeyJustPressed(Input.Keys.F11)) {
                     // cpu vs cpu
                     setControllers(new ComputerPlayerBasic(pool).grid(grid).team(Team.RED),
                             new ComputerPlayerMid2(pool, grid, Team.BLUE, 4));
