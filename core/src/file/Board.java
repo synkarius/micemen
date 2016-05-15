@@ -11,6 +11,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import control.ComputerPlayerBasic;
+import control.ComputerPlayerMid2;
 import control.IController;
 import control.KeyboardController;
 import model.Block;
@@ -75,6 +77,7 @@ public class Board {
         String board = getBoardString(grid);
         String opponentWasCPU = (blue == null || !(blue instanceof KeyboardController)) ? "1" : "0";
         String team = grid.activeTeam() == Team.RED ? "0" : "1";
+        String level = (blue instanceof ComputerPlayerMid2) ? ((ComputerPlayerMid2) blue).lookAhead() + "" : "0";
         
         if (Files.exists(savePath()))
             try {
@@ -85,7 +88,7 @@ public class Board {
         
         try (BufferedWriter writer = Files.newBufferedWriter(savePath())) {
             
-            writer.write("0");// reserved for CPU level
+            writer.write(level);// reserved for CPU level
             writer.write(opponentWasCPU);
             writer.write(team);
             writer.newLine();
@@ -98,10 +101,6 @@ public class Board {
     public static CheeseGrid loadFromSave() {
         CheeseGrid result = CheeseGrid.getNewDefault();
         
-        Team team = Team.RED;
-        boolean opponentWasCPU = false;
-        int level;
-        
         try (BufferedReader reader = Files.newBufferedReader(savePath())) {
             
             int x = 0;
@@ -112,11 +111,10 @@ public class Board {
                     continue;
                 
                 /** if this is a config line (the first line) */
-                if (line.startsWith("0") || line.startsWith("1")) {
-                    if (line.charAt(1) == '1')
-                        opponentWasCPU = true;
-                    if (line.charAt(2) == '1')
-                        team = Team.BLUE;
+                if (!line.startsWith(".")) {
+                    result.opponentLevel(Integer.parseInt(line.substring(0, 1)));
+                    result.opponentWasCPU(line.charAt(1) == '1');
+                    result.activeTeam((line.charAt(2) == '1') ? Team.BLUE : Team.RED);
                     continue;
                 }
                 
@@ -157,8 +155,6 @@ public class Board {
             return null;
         }
         
-        result.activeTeam(team);
-        result.opponentWasCPU(opponentWasCPU);
         return result;
     }
     

@@ -50,6 +50,10 @@ public class ComputerPlayerMid2 extends ComputerPlayerBasic {
         return this;
     }
     
+    public int lookAhead() {
+        return lookAhead;
+    }
+    
     @Override
     public IOrder getOrder() throws CheeseException {
         // if (hasChosen) {

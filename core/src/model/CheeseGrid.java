@@ -26,6 +26,8 @@ public class CheeseGrid {
     private Integer            blueHand;
     
     private boolean            opponentWasCPU;
+    protected int              gridID;
+    private int                opponentLevel;
     private boolean            isGraphical;
     
     private SimulationNode     lastChosen;
@@ -69,8 +71,6 @@ public class CheeseGrid {
     }
     
     private static int nextID = 0;
-    
-    protected int      gridID;
     
     public int id() {
         return gridID;
@@ -258,6 +258,14 @@ public class CheeseGrid {
     
     public boolean opponentWasCPU() {
         return opponentWasCPU;
+    }
+    
+    public void opponentLevel(int opponentLevel) {
+        this.opponentLevel = opponentLevel;
+    }
+    
+    public int opponentLevel() {
+        return opponentLevel;
     }
     
     @Override

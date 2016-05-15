@@ -101,7 +101,17 @@ public class KeyboardController implements IController {
     }
     
     public void loadOpponent() {
-        IController blue = grid.opponentWasCPU() ? new ComputerPlayerBasic(pool).grid(grid).team(Team.BLUE) : this;
+        IController blue;
+        if (grid.opponentWasCPU()) {
+            if (grid.opponentLevel() == 0) {
+                blue = new ComputerPlayerBasic(pool).grid(grid).team(Team.BLUE);
+            } else {
+                blue = new ComputerPlayerMid2(pool).lookAhead(grid.opponentLevel()).grid(grid).team(Team.BLUE);
+            }
+        } else {
+            blue = this;
+        }
+        
         setControllers(this, blue);
     }
     
