@@ -15,6 +15,7 @@ import model.CheeseGrid;
 import model.Mouse.Team;
 import orders.ColumnShift;
 import orders.IOrder;
+import orders.OrderType;
 import orders.PassTurn;
 import orders.SetHand;
 import simulate.Simulator;
@@ -228,15 +229,17 @@ public class KeyboardController implements IController {
                 } else {
                     IOrder move = grid.activeTeam() == Team.RED ? red.getOrder() : blue.getOrder();
                     if (move != null) {
-                        String board = Board.getBoardString(grid, false).trim();
-                        Integer value = dao.valueOf(board);
-                        if (value != null)
-                            dao.insert(board, value);
+                        // String board = Board.getBoardString(grid,
+                        // false).trim();
+                        // Integer value = dao.valueOf(board);
+                        // if (value != null)
+                        // dao.insert(board, value);
                         
                         grid.ctrl().orders().add(move);
-                    } else {
-                        grid.state().randomMouseEatsCheese();
                     }
+                    
+                    if (move == null || move.type() == OrderType.PROGRESS)
+                        grid.state().randomMouseEatsCheese();
                 }
             }
         }

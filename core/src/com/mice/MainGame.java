@@ -21,6 +21,8 @@ import data.DataAccessor;
 import graphical.Resource;
 import graphical.SceneGraph;
 import graphical.TitleScreen;
+import gridparts.GridController;
+import gridparts.GridController.Scores;
 import model.CheeseException;
 import model.CheeseGrid;
 import model.SimPoint;
@@ -64,6 +66,9 @@ public class MainGame extends ApplicationAdapter {
             if (!loaded) {
                 this.grid.state().menu().chooseOpponent();
             } else {
+                Scores scores = GridController.scores(this.grid, false);
+                this.grid.state().menu().redScore = scores.redScore;
+                this.grid.state().menu().blueScore = scores.blueScore;
                 this.grid.state().menu().menu();
                 this.input.loadOpponent();
                 this.input.startGame(this.grid.activeTeam());
@@ -78,7 +83,7 @@ public class MainGame extends ApplicationAdapter {
     public void create() {
         {
             /** libgdx screen setup */
-            pool = Executors.newWorkStealingPool();//.newFixedThreadPool(40);
+            pool = Executors.newWorkStealingPool();// .newFixedThreadPool(100);
             batch = new SpriteBatch();
             camera = new OrthographicCamera(SceneGraph.WIDTH, SceneGraph.HEIGHT);
             viewport = new FitViewport(SceneGraph.WIDTH, SceneGraph.HEIGHT, camera);
@@ -92,10 +97,8 @@ public class MainGame extends ApplicationAdapter {
         dao = new DataAccessor();
         dao.create();
         
-        
         Restart restart = this::restart;
         restart.action(null);
-        
         
     }
     
