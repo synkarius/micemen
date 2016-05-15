@@ -48,7 +48,8 @@ public class PassTurn implements IOrder {
         grid.activeTeam(nextTeam);
         
         // update animations
-        changeTeamAnimations(grid, nextTeam);
+        if (grid.isGraphical())
+            changeTeamAnimations(grid, nextTeam);
         
         // section to handle if there's only 1 pole:
         if (count < 2) {
