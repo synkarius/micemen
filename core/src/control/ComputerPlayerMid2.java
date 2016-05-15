@@ -11,43 +11,19 @@ import orders.IOrder;
 import orders.Progress;
 import orders.SetHand;
 import simulate.SimFlatTree;
-import simulate.SimNodeTree;
 import simulate.SimulationNode;
 
 public class ComputerPlayerMid2 extends ComputerPlayerBasic {
     
-    private int         lookAhead = 2;
+    private final int   lookAhead;
     private SimFlatTree tree;
-    // /** true so makes 1st move */
-    // private boolean hasChosen = true;
     
-    public ComputerPlayerMid2(ExecutorService pool) {
+    public ComputerPlayerMid2(ExecutorService pool, CheeseGrid grid, Team team, int lookAhead) {
         super(pool);
-    }
-    
-    @Override
-    public ComputerPlayer grid(CheeseGrid grid) {
         super.grid(grid);
-        if (team != null)
-            makeTree();
-        return this;
-    }
-    
-    @Override
-    public ComputerPlayer team(Team team) {
         super.team(team);
-        if (grid != null)
-            makeTree();
-        return this;
-    }
-    
-    private void makeTree() {
-        this.tree = new SimFlatTree(pool, grid, team, lookAhead);
-    }
-    
-    public ComputerPlayerMid2 lookAhead(int lookAhead) {
         this.lookAhead = lookAhead;
-        return this;
+        this.tree = new SimFlatTree(pool, grid, team, lookAhead);
     }
     
     public int lookAhead() {
@@ -56,19 +32,10 @@ public class ComputerPlayerMid2 extends ComputerPlayerBasic {
     
     @Override
     public IOrder getOrder() throws CheeseException {
-        // if (hasChosen) {
-        // // prune for other team's last choice:
-        // if (grid.lastChosen() != null)
-        // tree.prune(grid.lastChosen(), true);
-        // hasChosen = false;
-        // }
-        
         if (!tree.isReady())
             return tree.process();
         
-        SimulationNode best = tree.getBestFuture();
-        // hasChosen = true;
-        // tree.prune(best, false);
+        SimulationNode best = tree.getBestFuture(lookAhead);
         tree.clear();
         
         Combo combo = new Combo();
@@ -83,10 +50,7 @@ public class ComputerPlayerMid2 extends ComputerPlayerBasic {
     
     @Override
     public ComputerPlayer copy() {
-        ComputerPlayerMid2 copy = new ComputerPlayerMid2(pool);
-        copy.team = this.team;
-        copy.lookAhead = this.lookAhead;
-        return copy;
+        return new ComputerPlayerMid2(pool, grid, team, lookAhead);
     }
     
 }

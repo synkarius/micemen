@@ -106,7 +106,7 @@ public class KeyboardController implements IController {
             if (grid.opponentLevel() == 0) {
                 blue = new ComputerPlayerBasic(pool).grid(grid).team(Team.BLUE);
             } else {
-                blue = new ComputerPlayerMid2(pool).lookAhead(grid.opponentLevel()).grid(grid).team(Team.BLUE);
+                blue = new ComputerPlayerMid2(pool, grid, Team.BLUE, grid.opponentLevel());
             }
         } else {
             blue = this;
@@ -138,7 +138,7 @@ public class KeyboardController implements IController {
                 } else if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
                     // cpu vs cpu
                     setControllers(new ComputerPlayerBasic(pool).grid(grid).team(Team.RED),
-                            new ComputerPlayerMid2(pool).lookAhead(4).grid(grid).team(Team.BLUE));
+                            new ComputerPlayerMid2(pool, grid, Team.BLUE, 4));
                     choseCPUOpponent = false;
                 }
                 if (controllersAreSetUp()) {
@@ -155,10 +155,10 @@ public class KeyboardController implements IController {
                 
                 if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
                     chose = true;
-                    setControllers(this, new ComputerPlayerMid2(pool).lookAhead(4).grid(grid).team(Team.BLUE));
+                    setControllers(this, new ComputerPlayerMid2(pool, grid, Team.BLUE, 4));
                 } else if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
                     chose = true;
-                    setControllers(this, new ComputerPlayerMid2(pool).lookAhead(2).grid(grid).team(Team.BLUE));
+                    setControllers(this, new ComputerPlayerMid2(pool, grid, Team.BLUE, 2));
                 } else if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
                     setControllers(this, new ComputerPlayerBasic(pool).grid(grid).team(Team.BLUE));
                     chose = true;

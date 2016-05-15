@@ -88,7 +88,6 @@ public class SimFlatTree {
     private SimulationNode execute(Task task, int depth, int chosen) {
         if (depth > LVLS.length - 1)
             throw new CheeseException("Bad depth.");
-   
         
         /** the SETUP section assumes we're on the parent level */
         if (task == Task.SETUP)
@@ -179,11 +178,11 @@ public class SimFlatTree {
         currentDepth = 0;
     }
     
-    public SimulationNode getBestFuture() {
+    public SimulationNode getBestFuture(int depth) {
         int[] score = new int[MAX_CH];
         int[] count = new int[MAX_CH];
-        SimulationNode[] level = LVLS[maxDepth];
-        int increment = INCREMENTS[maxDepth - 1];
+        SimulationNode[] level = LVLS[depth];
+        int increment = depth > 0 ? INCREMENTS[depth - 1] : 1;
         
         // sum the future values of the children
         for (int i = 0; i < level.length; i++) {
@@ -200,10 +199,16 @@ public class SimFlatTree {
             if (LVLS[0][j] == null)
                 continue;
             
+            // at end of game, there may be no more
+            // branches to count -- at that point, score
+            // the most complex available branch
+            if (score[j] == 0 && count[j] == 0)
+                return getBestFuture(depth - 1);
+            
             // get average
             score[j] /= count[j];
             
-            if (best == null || score[best] < score[j]) 
+            if (best == null || score[best] < score[j])
                 best = j;
             
         }
