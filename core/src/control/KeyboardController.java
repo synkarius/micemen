@@ -1,12 +1,10 @@
 package control;
 
-import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
-import data.DataAccessor;
 import file.Board;
 import gridparts.GridController;
 import gridparts.GridController.Scores;
@@ -39,11 +37,9 @@ public class KeyboardController implements IController {
     private Restart         restart;
     
     private ExecutorService pool;
-    private DataAccessor    dao;
     
-    public KeyboardController(ExecutorService pool, DataAccessor dao) {
+    public KeyboardController(ExecutorService pool) {
         this.pool = pool;
-        this.dao = dao;
     }
     
     public KeyboardController setRestart(Restart restart) {
@@ -139,7 +135,7 @@ public class KeyboardController implements IController {
                 } else if (Gdx.input.isKeyJustPressed(Input.Keys.F11)) {
                     // cpu vs cpu
                     setControllers(new ComputerPlayerBasic(pool).grid(grid).team(Team.RED),
-                            new ComputerPlayerMid2(pool, grid, Team.BLUE, 4));
+                            new ComputerPlayerMid2(pool, grid, Team.BLUE, 3));
                     choseCPUOpponent = false;
                 }
                 if (controllersAreSetUp()) {
@@ -156,7 +152,7 @@ public class KeyboardController implements IController {
                 
                 if (Gdx.input.isKeyJustPressed(Input.Keys.H)) {
                     chose = true;
-                    setControllers(this, new ComputerPlayerMid2(pool, grid, Team.BLUE, 4));
+                    setControllers(this, new ComputerPlayerMid2(pool, grid, Team.BLUE, 3));
                 } else if (Gdx.input.isKeyJustPressed(Input.Keys.M)) {
                     chose = true;
                     setControllers(this, new ComputerPlayerMid2(pool, grid, Team.BLUE, 2));
@@ -189,11 +185,6 @@ public class KeyboardController implements IController {
                         this.restart.action(load);
                     }
                 } else if (mode == ControlMode.CONFIRM_QUIT) {
-                    try {
-                        dao.dump();
-                    } catch (IOException e) {
-                        throw new CheeseException(e);
-                    }
                     System.exit(0);
                 }
                 mode = ControlMode.GAME;
