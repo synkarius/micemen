@@ -1,1 +1,2 @@
-include 'desktop', 'ios', 'core'
+include 'desktop', 'core'
+

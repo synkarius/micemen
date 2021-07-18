@@ -1,15 +1,24 @@
-.gradle
-.project
-.settings
-*.class
-*.db
-mouse_dump.txt
+## saves, etc.
 *.oldsave
-*.log
 mice.txt
-/desktop/
-/ios/
 
+## Java
+*.class
+hs_err_pid*
 
+## IntelliJ
+.idea/
 
+## Gradle
+/local.properties
+.gradle/
+gradle-app.setting
+/build/
+/core/build/
+/desktop/build/
+/calculation/build/
+/simulator/build/
 
+## OS Specific
+.DS_Store
+Thumbs.db
