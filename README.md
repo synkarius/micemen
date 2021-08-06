@@ -1,5 +1,7 @@
 # Mice Men: Remix #
 
+![Build Status](https://github.com/synkarius/micemen/actions/workflows/gradle.yml/badge.svg)
+
 A remake of the DOS classic puzzle game "Mice Men", by William Soleau.
 
 Remake code and binary distributed as open source with original author's express permission.
