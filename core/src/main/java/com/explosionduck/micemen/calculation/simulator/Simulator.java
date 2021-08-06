@@ -27,7 +27,7 @@ import static java.util.function.Predicate.not;
  */
 public class Simulator {
 
-    private static final int NUMBER_OF_GAMES = 3;
+    private static final int NUMBER_OF_GAMES = 1000;
 
     private final ExecutorService executorService;
     private final GridCalculator gridCalculator;
