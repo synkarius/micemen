@@ -2,13 +2,11 @@ package com.explosionduck.micemen;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.explosionduck.micemen.calculation.BoardGenerator;
 import com.explosionduck.micemen.calculation.BoardScorer;
 import com.explosionduck.micemen.calculation.calculator.GridCalculator;
-import com.explosionduck.micemen.calculation.simulator.SimulationCollector;
 import com.explosionduck.micemen.command.*;
 import com.explosionduck.micemen.command.menu.ChangeModeCommand;
 import com.explosionduck.micemen.command.menu.EnableEffectsCommand;
@@ -18,7 +16,6 @@ import com.explosionduck.micemen.control.Controller;
 import com.explosionduck.micemen.control.keyboard.KeyboardController;
 import com.explosionduck.micemen.control.keyboard.modes.*;
 import com.explosionduck.micemen.dagger.config.DaggerPostLibGDXInitComponent;
-import com.explosionduck.micemen.dagger.config.DaggerPreLibGDXInitComponent;
 import com.explosionduck.micemen.domain.CheeseGrid;
 import com.explosionduck.micemen.domain.DefaultGameContext;
 import com.explosionduck.micemen.domain.GameContext;
@@ -86,14 +83,6 @@ public class MainGame extends ApplicationAdapter {
 
     @Override
     public void render() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F12)) { // TODO: move this simulator stuff
-            var simulationResult = DaggerPreLibGDXInitComponent.create()
-                    .buildSimulator()
-                    .simulate(1000)
-                    .collect(new SimulationCollector());
-            System.out.println(simulationResult);
-        }
-
         var screen = this.screens.element();
         if (screen != this.titleScreen) {
             if (this.commandExecutor.hasCommands()) {
