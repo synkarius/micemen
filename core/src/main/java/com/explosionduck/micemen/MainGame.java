@@ -89,7 +89,7 @@ public class MainGame extends ApplicationAdapter {
         if (Gdx.input.isKeyJustPressed(Input.Keys.F12)) { // TODO: move this simulator stuff
             var simulationResult = DaggerPreLibGDXInitComponent.create()
                     .buildSimulator()
-                    .simulate()
+                    .simulate(1000)
                     .collect(new SimulationCollector());
             System.out.println(simulationResult);
         }

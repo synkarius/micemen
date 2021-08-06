@@ -22,12 +22,7 @@ import java.util.stream.Stream;
 
 import static java.util.function.Predicate.not;
 
-/**
- * Runs 1000 games, prints results.
- */
 public class Simulator {
-
-    private static final int NUMBER_OF_GAMES = 1000;
 
     private final ExecutorService executorService;
     private final GridCalculator gridCalculator;
@@ -45,8 +40,8 @@ public class Simulator {
         this.boardScorer = boardScorer;
     }
 
-    public Stream<SimulationResult> simulate() throws CheeseException {
-        return IntStream.range(0, NUMBER_OF_GAMES).boxed()
+    public Stream<SimulationResult> simulate(int numberOfGames) throws CheeseException {
+        return IntStream.range(0, numberOfGames).boxed()
                 .map(i -> {
                     // set up game
                     var grid = CheeseGrid.getNewDefault();
@@ -93,9 +88,8 @@ public class Simulator {
                             redScore = scores.redScore;
                             blueScore = scores.blueScore;
 
-                            if (++moveCount > 200) { // discard deadlocked games
+                            if (++moveCount > 200) { // most likely a deadlocked game
                                 return new SimulationResult(startedAhead, null, System.currentTimeMillis() - start);
-//                                    continue allGames;
                             }
 
                             if (redScore == grid.getMicePerTeam() || blueScore == grid.getMicePerTeam())
@@ -104,21 +98,17 @@ public class Simulator {
                     }
 
                     long delta = System.currentTimeMillis() - start;
-
                     System.out.println("game: " + i + " moves: " + moveCount + " ; red: " + redScore + " ; blue: "
                             + blueScore + " ; time(ms): " + delta);
 
-                    if (redScore == grid.getMicePerTeam() || blueScore == grid.getMicePerTeam()) {
-                        Team winner = null;
-                        if (redScore > blueScore) {
-                            winner = Team.RED;
-                        } else if (blueScore > redScore) {
-                            winner = Team.BLUE;
-                        }
-                        return new SimulationResult(startedAhead, winner, System.currentTimeMillis() - start);
+                    Team winner = null;
+                    if (redScore > blueScore) {
+                        winner = Team.RED;
+                    } else if (blueScore > redScore) {
+                        winner = Team.BLUE;
                     }
                     // technically, it's possible that the last move would make both teams win...
-                    return new SimulationResult(startedAhead, null, System.currentTimeMillis() - start);
+                    return new SimulationResult(startedAhead, winner, System.currentTimeMillis() - start);
                 });
     }
 }
