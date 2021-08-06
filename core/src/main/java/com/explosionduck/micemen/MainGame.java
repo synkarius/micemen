@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.explosionduck.micemen.calculation.BoardGenerator;
 import com.explosionduck.micemen.calculation.BoardScorer;
 import com.explosionduck.micemen.calculation.calculator.GridCalculator;
+import com.explosionduck.micemen.calculation.simulator.SimulationCollector;
 import com.explosionduck.micemen.command.*;
 import com.explosionduck.micemen.command.menu.ChangeModeCommand;
 import com.explosionduck.micemen.command.menu.EnableEffectsCommand;
@@ -86,9 +87,11 @@ public class MainGame extends ApplicationAdapter {
     @Override
     public void render() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.F12)) { // TODO: move this simulator stuff
-            DaggerPreLibGDXInitComponent.create()
+            var simulationResult = DaggerPreLibGDXInitComponent.create()
                     .buildSimulator()
-                    .simulate();
+                    .simulate()
+                    .collect(new SimulationCollector());
+            System.out.println(simulationResult);
         }
 
         var screen = this.screens.element();
