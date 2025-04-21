@@ -6,7 +6,7 @@ A remake of the DOS classic puzzle game "Mice Men", by William Soleau.
 
 Remake code and binary distributed as open source with original author's express permission.
 
-**[Latest Version (1.1.0)](https://github.com/synkarius/micemen/releases/download/1.0.1/micemen.zip)** (Java 14+ required)
+**[Latest Version (1.1.0)](https://github.com/synkarius/micemen/releases/download/1.1.0/micemen-1.1.0.jar)** (Java 14+ required)
 
 * Uses [LibGDX](https://github.com/libgdx/libgdx).
 * Can save multiple games and easily edit save files.
